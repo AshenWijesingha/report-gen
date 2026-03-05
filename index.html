@@ -4481,9 +4481,22 @@ async function exportPDF() {
     pdf.setFillColor(14, 165, 233);
     pdf.rect(0, 0, 4, pageHeight, 'F');
     
-    // Logo area
-    addText('🛡️ CYBER INTEL', margin + 10, 30, { size: 20, style: 'bold', color: '#f8fafc' });
-    addText('Security Intelligence Platform', margin + 10, 38, { size: 9, color: '#64748b' });
+    // Logo area - draw shield logo mark using shapes (emoji not supported in jsPDF fonts)
+    const logoX = margin + 10;
+    const logoY = 22;
+    // Outer shield background
+    pdf.setFillColor(14, 165, 233);
+    pdf.roundedRect(logoX, logoY, 12, 13, 2, 2, 'F');
+    // 'CI' initials centered inside shield box (offsets tuned to the 12x13 box)
+    const textOffsetX = 1.5; // horizontal padding to center 'CI' in the 12-unit wide box
+    const textOffsetY = 9;   // vertical baseline offset for 9pt font within the 13-unit tall box
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(255, 255, 255);
+    pdf.text('CI', logoX + textOffsetX, logoY + textOffsetY);
+    // Logo text
+    addText('CYBER INTEL', logoX + 15, 30, { size: 20, style: 'bold', color: '#f8fafc' });
+    addText('Security Intelligence Platform', logoX + 15, 38, { size: 9, color: '#64748b' });
     
     // Meta info
     addText(`DATE: ${date}`, pageWidth - margin - 50, 25, { size: 8, color: '#64748b' });
