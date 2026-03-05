@@ -2323,6 +2323,187 @@ input[type="file"] {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   LOGO UPLOAD
+═══════════════════════════════════════════════════════════════ */
+.logo-upload-section {
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: rgba(15, 21, 32, 0.5);
+}
+
+.logo-upload-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.logo-upload-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.logo-upload-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.logo-dropzone {
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  background: rgba(15, 21, 32, 0.4);
+  text-align: center;
+}
+
+.logo-dropzone:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.logo-dropzone-icon {
+  font-size: 28px;
+}
+
+.logo-dropzone-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.logo-dropzone-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.logo-dropzone-btn {
+  background: transparent;
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 4px;
+}
+
+.logo-dropzone-btn:hover {
+  background: var(--accent-bg);
+}
+
+.logo-preview {
+  display: none;
+  align-items: center;
+  gap: var(--space-md);
+  background: rgba(15, 21, 32, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.logo-preview.visible {
+  display: flex;
+}
+
+.logo-preview-img {
+  max-height: 60px;
+  max-width: 160px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  padding: 4px;
+}
+
+.logo-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.logo-preview-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logo-preview-size {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.logo-remove-btn {
+  background: var(--critical-bg);
+  border: 1px solid var(--critical-br);
+  color: var(--critical);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.logo-remove-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REPORT OPTIONS
+═══════════════════════════════════════════════════════════════ */
+.report-options-section {
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: rgba(15, 21, 32, 0.5);
+}
+
+.report-options-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.report-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    PRINT STYLES
 ═══════════════════════════════════════════════════════════════ */
 @media print {
@@ -2435,6 +2616,49 @@ input[type="file"] {
     <!-- Entity Name Inputs -->
     <div class="entity-inputs" id="entity-inputs"></div>
     
+    <!-- Logo Upload -->
+    <div class="logo-upload-section">
+      <div class="logo-upload-header">
+        <span>🖼️</span>
+        <span class="logo-upload-title">Company Logo</span>
+        <span class="logo-upload-badge">Optional</span>
+      </div>
+      <div class="logo-dropzone" id="logo-dropzone">
+        <div class="logo-dropzone-icon">🏷️</div>
+        <div class="logo-dropzone-text">Upload your company logo</div>
+        <div class="logo-dropzone-hint">PNG, JPG, SVG, or WebP · Max 2 MB · Will appear on report cover &amp; PDF</div>
+        <button class="logo-dropzone-btn" id="logo-browse-btn" type="button">Choose Image</button>
+        <input type="file" id="logo-input" accept="image/*" style="display:none">
+      </div>
+      <div class="logo-preview" id="logo-preview">
+        <img class="logo-preview-img" id="logo-preview-img" src="" alt="Logo preview">
+        <div class="logo-preview-info">
+          <div class="logo-preview-name" id="logo-preview-name"></div>
+          <div class="logo-preview-size" id="logo-preview-size"></div>
+        </div>
+        <button class="logo-remove-btn" id="logo-remove-btn" title="Remove logo">✕</button>
+      </div>
+    </div>
+    
+    <!-- Report Options -->
+    <div class="report-options-section">
+      <div class="report-options-title">⚙️ Report Options</div>
+      <div class="report-options-grid">
+        <div class="input-group">
+          <label class="input-label" for="analyst-name-input">Analyst / Author Name</label>
+          <input class="input-field" id="analyst-name-input" type="text" placeholder="e.g., John Smith">
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="report-title-input">Report Title</label>
+          <input class="input-field" id="report-title-input" type="text" placeholder="e.g., Q1 2025 Security Assessment">
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="assessment-period-input">Assessment Period</label>
+          <input class="input-field" id="assessment-period-input" type="text" placeholder="e.g., Jan 2025 – Mar 2025">
+        </div>
+      </div>
+    </div>
+    
     <!-- Generate Button -->
     <button class="generate-button" id="generate-btn" disabled>
       <span>⚡</span>
@@ -2544,7 +2768,13 @@ let state = {
   analyzedData: [],
   activeEntityIndex: 0,
   allIssues: [],
-  issueRegistry: {} // Map of issue IDs to issue objects for safe click handling
+  issueRegistry: {}, // Map of issue IDs to issue objects for safe click handling
+  logoDataUrl: null, // base64 data URL of uploaded logo
+  logoNaturalWidth: null, // natural width of the logo image in pixels
+  logoNaturalHeight: null, // natural height of the logo image in pixels
+  analystName: '',
+  reportTitle: '',
+  assessmentPeriod: ''
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -2573,7 +2803,20 @@ const elements = {
   modalClose: document.getElementById('modal-close'),
   pdfOverlay: document.getElementById('pdf-overlay'),
   pdfBar: document.getElementById('pdf-bar'),
-  pdfStatus: document.getElementById('pdf-status')
+  pdfStatus: document.getElementById('pdf-status'),
+  // Logo upload elements
+  logoDropzone: document.getElementById('logo-dropzone'),
+  logoInput: document.getElementById('logo-input'),
+  logoBrowseBtn: document.getElementById('logo-browse-btn'),
+  logoPreview: document.getElementById('logo-preview'),
+  logoPreviewImg: document.getElementById('logo-preview-img'),
+  logoPreviewName: document.getElementById('logo-preview-name'),
+  logoPreviewSize: document.getElementById('logo-preview-size'),
+  logoRemoveBtn: document.getElementById('logo-remove-btn'),
+  // Report options
+  analystNameInput: document.getElementById('analyst-name-input'),
+  reportTitleInput: document.getElementById('report-title-input'),
+  assessmentPeriodInput: document.getElementById('assessment-period-input')
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -2661,6 +2904,79 @@ function guessEntityName(filename) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  LOGO UPLOAD HANDLING
+// ═══════════════════════════════════════════════════════════════
+elements.logoBrowseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  elements.logoInput.click();
+});
+
+elements.logoDropzone.addEventListener('click', () => elements.logoInput.click());
+
+elements.logoDropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  elements.logoDropzone.style.borderColor = 'var(--accent)';
+});
+
+elements.logoDropzone.addEventListener('dragleave', () => {
+  elements.logoDropzone.style.borderColor = '';
+});
+
+elements.logoDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  elements.logoDropzone.style.borderColor = '';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    handleLogoFile(file);
+  }
+});
+
+elements.logoInput.addEventListener('change', () => {
+  const file = elements.logoInput.files[0];
+  if (file) {
+    handleLogoFile(file);
+    elements.logoInput.value = '';
+  }
+});
+
+elements.logoRemoveBtn.addEventListener('click', removeLogo);
+
+function handleLogoFile(file) {
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Logo file must be smaller than 2 MB.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    state.logoDataUrl = e.target.result;
+    // Get natural image dimensions for proper aspect ratio in PDF
+    const img = new Image();
+    img.onload = () => {
+      state.logoNaturalWidth = img.naturalWidth;
+      state.logoNaturalHeight = img.naturalHeight;
+    };
+    img.src = e.target.result;
+    
+    elements.logoPreviewImg.src = e.target.result;
+    elements.logoPreviewName.textContent = file.name;
+    elements.logoPreviewSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+    elements.logoDropzone.style.display = 'none';
+    elements.logoPreview.classList.add('visible');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo() {
+  state.logoDataUrl = null;
+  state.logoNaturalWidth = null;
+  state.logoNaturalHeight = null;
+  elements.logoPreviewImg.src = '';
+  elements.logoPreview.classList.remove('visible');
+  elements.logoDropzone.style.display = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  REPORT GENERATION
 // ═══════════════════════════════════════════════════════════════
 elements.generateBtn.addEventListener('click', generateReport);
@@ -2672,6 +2988,11 @@ if (loadSampleBtn) {
 }
 
 async function loadSampleData() {
+  // Capture report options
+  state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
+  state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim()) || '';
+  state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim()) || '';
+  
   // Show loading screen
   elements.uploadScreen.style.display = 'none';
   elements.loadingScreen.classList.add('active');
@@ -2750,6 +3071,11 @@ async function loadSampleData() {
 
 async function generateReport() {
   if (state.files.length === 0) return;
+  
+  // Capture report options
+  state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
+  state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim()) || '';
+  state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim()) || '';
   
   // Show loading screen
   elements.uploadScreen.style.display = 'none';
@@ -3056,9 +3382,10 @@ function makeClickableLink(url, maxLen = 40) {
 }
 
 function pageFooter(entityName, pageNum, totalPages) {
+  const analystSuffix = state.analystName ? ` · ${escapeHtml(state.analystName)}` : '';
   return `
     <div class="page-footer">
-      <div class="page-footer-text">${escapeHtml(entityName)} — Cyber Security Vulnerability Assessment · Confidential</div>
+      <div class="page-footer-text">${escapeHtml(entityName)} — Cyber Security Vulnerability Assessment · Confidential${analystSuffix}</div>
       <div class="page-number">${pageNum} / ${totalPages}</div>
     </div>
   `;
@@ -3138,6 +3465,14 @@ function renderDonutLegend(severity) {
 function renderCoverPage(data, entityName) {
   const { severity, total } = data;
   const date = formatDate();
+  const assessmentPeriod = state.assessmentPeriod || '2024–2026';
+  const reportTitle = state.reportTitle || '';
+  const analystName = state.analystName || '';
+  
+  // Build logo HTML: show uploaded image or default shield icon
+  const logoHtml = state.logoDataUrl
+    ? `<img src="${state.logoDataUrl}" alt="Company Logo" style="max-height: 54px; max-width: 180px; object-fit: contain; border-radius: 6px; background: rgba(255,255,255,0.05); padding: 4px;">`
+    : `<div class="cover-logo-mark">🛡️</div>`;
   
   return `
     <div class="page page-cover" id="page-cover">
@@ -3146,7 +3481,7 @@ function renderCoverPage(data, entityName) {
       
       <div class="cover-top">
         <div class="cover-logo">
-          <div class="cover-logo-mark">🛡️</div>
+          ${logoHtml}
           <div>
             <div class="cover-logo-text">CYBER INTEL</div>
             <div class="cover-logo-tag">Security Intelligence Platform</div>
@@ -3157,15 +3492,14 @@ function renderCoverPage(data, entityName) {
           <div>CLASSIFICATION: CONFIDENTIAL</div>
           <div>VERSION: 1.0</div>
           <div>SOURCE: SECURITYSCORECARD</div>
+          ${analystName ? `<div>ANALYST: ${escapeHtml(analystName)}</div>` : ''}
         </div>
       </div>
       
       <div class="cover-main">
         <div class="cover-eyebrow">Vulnerability Assessment Report</div>
         <div class="cover-title">
-          Cyber Risk<br>
-          <em>Intelligence</em><br>
-          Report
+          ${reportTitle ? escapeHtml(reportTitle) : `Cyber Risk<br><em>Intelligence</em><br>Report`}
         </div>
         <div class="cover-desc">Comprehensive vulnerability findings, risk domain analysis, CVE intelligence, and strategic remediation roadmap with complete issue details and recommendations</div>
         <div class="cover-entity-badge">🏢 ${escapeHtml(entityName)}</div>
@@ -3196,7 +3530,8 @@ function renderCoverPage(data, entityName) {
       <div class="cover-footer">
         <div class="cover-footer-info">
           <div>Cyber Security Vulnerability Assessment Report</div>
-          <div>Assessment Period: 2024–2026 · Total Issues: ${total}</div>
+          <div>Assessment Period: ${escapeHtml(assessmentPeriod)} · Total Issues: ${total}</div>
+          ${analystName ? `<div>Prepared by: ${escapeHtml(analystName)}</div>` : ''}
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted)">Page 1</div>
       </div>
@@ -4481,31 +4816,78 @@ async function exportPDF() {
     pdf.setFillColor(14, 165, 233);
     pdf.rect(0, 0, 4, pageHeight, 'F');
     
-    // Logo area - draw shield logo mark using shapes (emoji not supported in jsPDF fonts)
+    // Logo area
     const logoX = margin + 10;
-    const logoY = 22;
-    // Outer shield background
-    pdf.setFillColor(14, 165, 233);
-    pdf.roundedRect(logoX, logoY, 12, 13, 2, 2, 'F');
-    // 'CI' initials centered inside shield box (offsets tuned to the 12x13 box)
-    const textOffsetX = 1.5; // horizontal padding to center 'CI' in the 12-unit wide box
-    const textOffsetY = 9;   // vertical baseline offset for 9pt font within the 13-unit tall box
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(255, 255, 255);
-    pdf.text('CI', logoX + textOffsetX, logoY + textOffsetY);
-    // Logo text
-    addText('CYBER INTEL', logoX + 15, 30, { size: 20, style: 'bold', color: '#f8fafc' });
-    addText('Security Intelligence Platform', logoX + 15, 38, { size: 9, color: '#64748b' });
+    const logoY = 20;
+    if (state.logoDataUrl) {
+      // Embed the uploaded company logo (image) with preserved aspect ratio
+      try {
+        // Determine image format from data URL prefix
+        const formatMatch = state.logoDataUrl.match(/^data:image\/([a-zA-Z+]+);base64,/);
+        const imgFormat = formatMatch ? formatMatch[1].toUpperCase().replace('SVG+XML', 'SVG') : 'PNG';
+        const safeFormat = ['PNG', 'JPEG', 'JPG', 'WEBP'].includes(imgFormat) ? imgFormat : 'PNG';
+        
+        // Calculate dimensions preserving aspect ratio within max 48mm × 20mm bounds
+        const maxW = 48;
+        const maxH = 20;
+        let imgW = maxW;
+        let imgH = maxH;
+        if (state.logoNaturalWidth && state.logoNaturalHeight) {
+          const ratio = state.logoNaturalWidth / state.logoNaturalHeight;
+          if (ratio > maxW / maxH) {
+            imgW = maxW;
+            imgH = maxW / ratio;
+          } else {
+            imgH = maxH;
+            imgW = maxH * ratio;
+          }
+        }
+        pdf.addImage(state.logoDataUrl, safeFormat, logoX, logoY, imgW, imgH, undefined, 'FAST');
+        const textOffsetX = imgW + 4;
+        addText('CYBER INTEL', logoX + textOffsetX, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
+        addText('Security Intelligence Platform', logoX + textOffsetX, logoY + 14, { size: 8, color: '#64748b' });
+      } catch (err) {
+        // Fallback to initials box if image embedding fails
+        pdf.setFillColor(14, 165, 233);
+        pdf.roundedRect(logoX, logoY, 12, 13, 2, 2, 'F');
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(255, 255, 255);
+        pdf.text('CI', logoX + 1.5, logoY + 9);
+        addText('CYBER INTEL', logoX + 15, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
+        addText('Security Intelligence Platform', logoX + 15, logoY + 14, { size: 8, color: '#64748b' });
+      }
+    } else {
+      // Default: draw 'CI' initials shield box (emoji not supported in jsPDF fonts)
+      pdf.setFillColor(14, 165, 233);
+      pdf.roundedRect(logoX, logoY, 12, 13, 2, 2, 'F');
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('CI', logoX + 1.5, logoY + 9);
+      addText('CYBER INTEL', logoX + 15, logoY + 8, { size: 20, style: 'bold', color: '#f8fafc' });
+      addText('Security Intelligence Platform', logoX + 15, logoY + 16, { size: 9, color: '#64748b' });
+    }
     
     // Meta info
     addText(`DATE: ${date}`, pageWidth - margin - 50, 25, { size: 8, color: '#64748b' });
     addText('CLASSIFICATION: CONFIDENTIAL', pageWidth - margin - 50, 31, { size: 8, color: '#64748b' });
+    if (state.analystName) {
+      addText(`ANALYST: ${state.analystName}`, pageWidth - margin - 50, 37, { size: 8, color: '#64748b' });
+    }
     
     // Main title
-    addText('Cyber Risk', margin + 10, 90, { size: 36, style: 'bold', color: '#f8fafc' });
-    addText('Intelligence', margin + 10, 108, { size: 36, style: 'bold', color: '#0ea5e9' });
-    addText('Report', margin + 10, 126, { size: 36, style: 'bold', color: '#f8fafc' });
+    if (state.reportTitle) {
+      const titleLines = pdf.splitTextToSize(state.reportTitle, 120);
+      let titleY = 90;
+      titleLines.forEach((line, i) => {
+        addText(line, margin + 10, titleY + i * 14, { size: 28, style: 'bold', color: '#f8fafc' });
+      });
+    } else {
+      addText('Cyber Risk', margin + 10, 90, { size: 36, style: 'bold', color: '#f8fafc' });
+      addText('Intelligence', margin + 10, 108, { size: 36, style: 'bold', color: '#0ea5e9' });
+      addText('Report', margin + 10, 126, { size: 36, style: 'bold', color: '#f8fafc' });
+    }
     
     // Entity
     addText(`Entity: ${entityName}`, margin + 10, 150, { size: 12, color: '#38bdf8' });
@@ -4528,7 +4910,11 @@ async function exportPDF() {
     });
     
     // Footer
-    addText('Confidential - For authorized personnel only', margin + 10, pageHeight - 20, { size: 8, color: '#64748b' });
+    const assessPeriod = state.assessmentPeriod || '2024–2026';
+    addText(`Assessment Period: ${assessPeriod} · Confidential`, margin + 10, pageHeight - 20, { size: 8, color: '#64748b' });
+    if (state.analystName) {
+      addText(`Prepared by: ${state.analystName}`, margin + 10, pageHeight - 14, { size: 8, color: '#64748b' });
+    }
     addText('Page 1', pageWidth - margin - 15, pageHeight - 20, { size: 8, color: '#64748b' });
     
     // Page 2: Executive Summary
@@ -5051,6 +5437,7 @@ function showIssueById(issueId) {
 
 // Make functions globally available
 window.removeFile = removeFile;
+window.removeLogo = removeLogo;
 window.switchEntity = switchEntity;
 window.switchTab = switchTab;
 window.showIssueDetails = showIssueDetails;
