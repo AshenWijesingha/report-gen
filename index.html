@@ -1884,6 +1884,357 @@ input[type="file"] {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   LOAD SAMPLE DATA BUTTON
+═══════════════════════════════════════════════════════════════ */
+.sample-data-section {
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px dashed var(--border-medium);
+  text-align: center;
+}
+
+.sample-data-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+}
+
+.load-sample-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.load-sample-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAILED FINDING CARDS
+═══════════════════════════════════════════════════════════════ */
+.finding-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.finding-card:hover {
+  border-color: var(--border-medium);
+}
+
+.finding-card-header {
+  padding: var(--space-md);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.finding-card-header:hover {
+  background: var(--bg-hover);
+}
+
+.finding-card-severity {
+  flex-shrink: 0;
+}
+
+.finding-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.finding-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.finding-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.finding-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.finding-card-toggle {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: all var(--transition-fast);
+}
+
+.finding-card.expanded .finding-card-toggle {
+  transform: rotate(180deg);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.finding-card-body {
+  display: none;
+  padding: var(--space-lg);
+  background: var(--bg-secondary);
+}
+
+.finding-card.expanded .finding-card-body {
+  display: block;
+}
+
+.finding-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.finding-detail-item {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+}
+
+.finding-detail-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.finding-detail-value {
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.finding-detail-value a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.finding-detail-value a:hover {
+  text-decoration: underline;
+}
+
+.finding-section {
+  margin-bottom: var(--space-lg);
+}
+
+.finding-section:last-child {
+  margin-bottom: 0;
+}
+
+.finding-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.finding-section-title::before {
+  content: '';
+  width: 3px;
+  height: 12px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.finding-description {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.finding-recommendation {
+  background: rgba(14, 165, 233, 0.05);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.finding-recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.finding-recommendation-item:last-child {
+  border-bottom: none;
+}
+
+.finding-recommendation-bullet {
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.finding-analysis {
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid var(--info-br);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Findings Page Navigation */
+.findings-nav {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.findings-nav-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.findings-nav-btn.active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.findings-nav-btn:hover:not(.active) {
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+}
+
+.findings-count {
+  background: var(--bg-tertiary);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+
+.expand-all-btn {
+  margin-left: auto;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.expand-all-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Pagination */
+.findings-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    TOC PAGE
 ═══════════════════════════════════════════════════════════════ */
 .toc-header {
@@ -2089,6 +2440,15 @@ input[type="file"] {
       <span>⚡</span>
       <span>Generate Professional Report</span>
     </button>
+    
+    <!-- Sample Data Section -->
+    <div class="sample-data-section">
+      <div class="sample-data-label">Or try with sample data</div>
+      <button class="load-sample-btn" id="load-sample-btn">
+        <span>📁</span>
+        <span>Load Sample Data from /data folder</span>
+      </button>
+    </div>
     
     <!-- Features -->
     <div class="features-grid">
@@ -2305,6 +2665,89 @@ function guessEntityName(filename) {
 // ═══════════════════════════════════════════════════════════════
 elements.generateBtn.addEventListener('click', generateReport);
 
+// Sample data loading
+const loadSampleBtn = document.getElementById('load-sample-btn');
+if (loadSampleBtn) {
+  loadSampleBtn.addEventListener('click', loadSampleData);
+}
+
+async function loadSampleData() {
+  // Show loading screen
+  elements.uploadScreen.style.display = 'none';
+  elements.loadingScreen.classList.add('active');
+  
+  state.entities = [];
+  state.allIssues = [];
+  
+  // List of sample files to load from /data folder
+  const sampleFiles = [
+    { name: 'ABC-FullIssuesReport-2026-03-05.csv', entityName: 'ABC Company' },
+    { name: 'DEF-FullIssuesReport-2026-03-05.csv', entityName: 'DEF Company' }
+  ];
+  
+  for (let i = 0; i < sampleFiles.length; i++) {
+    const fileInfo = sampleFiles[i];
+    
+    elements.loaderStatus.textContent = `Loading ${fileInfo.entityName}…`;
+    elements.loaderBar.style.width = `${(i / sampleFiles.length) * 70}%`;
+    
+    try {
+      const response = await fetch(`data/${fileInfo.name}`);
+      if (!response.ok) {
+        console.error(`Failed to load ${fileInfo.name}`);
+        continue;
+      }
+      
+      const text = await response.text();
+      const result = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: h => h.trim()
+      });
+      
+      state.entities.push({
+        name: fileInfo.entityName,
+        rows: result.data
+      });
+      
+      // Store all issues with entity reference
+      result.data.forEach(row => {
+        state.allIssues.push({ ...row, _entityName: fileInfo.entityName });
+      });
+      
+    } catch (error) {
+      console.error(`Error loading ${fileInfo.name}:`, error);
+    }
+    
+    await sleep(100);
+  }
+  
+  if (state.entities.length === 0) {
+    elements.loadingScreen.classList.remove('active');
+    elements.uploadScreen.style.display = '';
+    alert('Could not load sample data files. Please ensure the data folder contains CSV files.');
+    return;
+  }
+  
+  elements.loaderBar.style.width = '85%';
+  elements.loaderStatus.textContent = 'Analyzing data…';
+  await sleep(200);
+  
+  // Analyze all entities
+  state.analyzedData = state.entities.map(entity => ({
+    name: entity.name,
+    data: analyzeEntity(entity.rows)
+  }));
+  
+  elements.loaderBar.style.width = '100%';
+  elements.loaderStatus.textContent = 'Rendering report…';
+  await sleep(200);
+  
+  // Hide loading, show report
+  elements.loadingScreen.classList.remove('active');
+  buildReport();
+}
+
 async function generateReport() {
   if (state.files.length === 0) return;
   
@@ -2491,17 +2934,23 @@ function renderPages(index) {
   state.issueRegistry = {};
   registerIssues(data.byGroup);
   
-  const totalPages = 7;
+  // Initialize detailed findings page state
+  state.detailedFindingsPage = 1;
+  state.detailedFindingsSeverity = 'ALL';
+  state.detailedFindingsExpanded = false;
+  
+  const totalPages = 8;
   
   elements.reportPages.innerHTML = 
     renderCoverPage(data, entityName) +
-    renderTOCPage(entityName) +
+    renderTOCPage(entityName, totalPages) +
     renderExecutiveSummary(data, entityName, 2, totalPages) +
     renderDomainAnalysis(data, entityName, 3, totalPages) +
     renderHighMediumFindings(data, entityName, 4, totalPages) +
     renderCVEAnalysis(data, entityName, 5, totalPages) +
     renderLowInfoFindings(data, entityName, 6, totalPages) +
-    renderRemediationRoadmap(data, entityName, 7, totalPages);
+    renderDetailedFindingsPage(data, entityName, 7, totalPages) +
+    renderRemediationRoadmap(data, entityName, 8, totalPages);
 }
 
 // Register issues in the registry for safe click handling (prevents XSS)
@@ -2541,6 +2990,22 @@ function generateId() {
 
 function formatDate() {
   return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+// Configuration constants
+const CONFIG = {
+  MAX_FINDINGS_IN_PDF: 25,
+  FINDINGS_PER_PAGE: 10
+};
+
+// Clean recommendation text by removing SecurityScorecard formatting artifacts
+function cleanRecommendationText(recommendation) {
+  if (!recommendation) return '';
+  return recommendation
+    .replace(/^'- /gm, '• ')
+    .replace(/'-/g, '-')
+    .replace(/'/g, "'")
+    .trim();
 }
 
 function getSeverityColor(sev) {
@@ -2739,7 +3204,7 @@ function renderCoverPage(data, entityName) {
   `;
 }
 
-function renderTOCPage(entityName) {
+function renderTOCPage(entityName, totalPages) {
   const date = formatDate();
   const sections = [
     ['01', 'Cover Page', 'Report overview, classification and summary KPIs', '1'],
@@ -2748,7 +3213,8 @@ function renderTOCPage(entityName) {
     ['04', 'High & Medium Findings', 'Critical & urgent findings requiring prioritized action', '4'],
     ['05', 'CVE Vulnerability Analysis', 'CVE intelligence registry and exposure mapping', '5'],
     ['06', 'Low & Informational Findings', 'Background risk catalogue and informational advisories', '6'],
-    ['07', 'Remediation Roadmap', 'Prioritized P1/P2/P3 action plan with timelines', '7'],
+    ['07', 'Detailed Findings Report', 'Complete findings with descriptions, analysis & recommendations', '7'],
+    ['08', 'Remediation Roadmap', 'Prioritized P1/P2/P3 action plan with timelines', '8'],
   ];
   
   return `
@@ -3263,6 +3729,394 @@ function renderLowInfoFindings(data, entityName, pageNum, totalPages) {
   `;
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  DETAILED FINDINGS PAGE - ALL INCLUSIVE REPORT
+// ═══════════════════════════════════════════════════════════════
+function renderDetailedFindingsPage(data, entityName, pageNum, totalPages) {
+  const { byGroup } = data;
+  const allFindings = [
+    ...(byGroup.HIGH || []),
+    ...(byGroup.MEDIUM || []),
+    ...(byGroup.LOW || []),
+    ...(byGroup.INFO || [])
+  ];
+  
+  const highCount = (byGroup.HIGH || []).length;
+  const medCount = (byGroup.MEDIUM || []).length;
+  const lowCount = (byGroup.LOW || []).length;
+  const infoCount = (byGroup.INFO || []).length;
+  const totalCount = allFindings.length;
+  
+  return `
+    <div class="page" id="page-detailed" style="min-height: auto; padding-bottom: 80px;">
+      <div class="page-accent"></div>
+      <div class="page-header">
+        <div class="page-section">Detailed Findings Report</div>
+        <div class="page-entity">${escapeHtml(entityName)}</div>
+      </div>
+      <div class="page-content">
+        <div class="section-header">
+          <div class="section-icon">📋</div>
+          <div>
+            <div class="section-title">Complete Findings with Full Details</div>
+            <div class="section-subtitle">All findings with descriptions, analysis, and remediation recommendations</div>
+          </div>
+        </div>
+        <div class="section-divider"></div>
+        
+        <div class="findings-nav">
+          <button class="findings-nav-btn active" onclick="filterDetailedFindings('ALL', this)">
+            📊 All <span class="findings-count">${totalCount}</span>
+          </button>
+          <button class="findings-nav-btn" onclick="filterDetailedFindings('HIGH', this)">
+            🔴 High <span class="findings-count">${highCount}</span>
+          </button>
+          <button class="findings-nav-btn" onclick="filterDetailedFindings('MEDIUM', this)">
+            🟡 Medium <span class="findings-count">${medCount}</span>
+          </button>
+          <button class="findings-nav-btn" onclick="filterDetailedFindings('LOW', this)">
+            🟢 Low <span class="findings-count">${lowCount}</span>
+          </button>
+          <button class="findings-nav-btn" onclick="filterDetailedFindings('INFO', this)">
+            🔵 Info <span class="findings-count">${infoCount}</span>
+          </button>
+          <button class="expand-all-btn" onclick="toggleAllFindings()">
+            ⬇️ Expand All
+          </button>
+        </div>
+        
+        <div id="detailed-findings-container">
+          ${renderDetailedFindingsList(allFindings, 1, 10)}
+        </div>
+        
+        ${totalCount > 10 ? `
+          <div class="findings-pagination">
+            <button class="pagination-btn" onclick="changeDetailedPage(-1)" id="prev-page-btn" disabled>← Previous</button>
+            <span class="pagination-info" id="pagination-info">Showing 1-${Math.min(10, totalCount)} of ${totalCount}</span>
+            <button class="pagination-btn" onclick="changeDetailedPage(1)" id="next-page-btn">Next →</button>
+          </div>
+        ` : ''}
+      </div>
+      ${pageFooter(entityName, pageNum, totalPages)}
+    </div>
+  `;
+}
+
+function renderDetailedFindingsList(findings, page, perPage) {
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const pageFindings = findings.slice(start, end);
+  
+  if (pageFindings.length === 0) {
+    return '<p style="color: var(--text-muted); font-size: 12px; padding: 20px 0; text-align: center;">No findings match the selected filter.</p>';
+  }
+  
+  return pageFindings.map((issue, idx) => renderDetailedFindingCard(issue, start + idx)).join('');
+}
+
+function renderDetailedFindingCard(issue, index) {
+  const cleanRecommendation = cleanRecommendationText(issue.recommendation);
+  
+  const recommendationItems = cleanRecommendation
+    .split(/\n|(?:• )/)
+    .filter(item => item.trim().length > 0)
+    .map(item => item.trim());
+  
+  return `
+    <div class="finding-card" id="finding-card-${index}">
+      <div class="finding-card-header" onclick="toggleFindingCard(${index})">
+        <div class="finding-card-severity">
+          ${severityBadge(issue.severity)}
+        </div>
+        <div class="finding-card-main">
+          <div class="finding-card-title">${escapeHtml(issue.title)}</div>
+          <div class="finding-card-meta">
+            <span>🏢 ${escapeHtml(issue.factor || 'Unknown')}</span>
+            ${issue.cve ? `<span>🔗 ${escapeHtml(issue.cve)}</span>` : ''}
+            ${issue.hostname ? `<span>🌐 ${escapeHtml(truncate(issue.hostname, 30))}</span>` : ''}
+            ${issue.scoreImpact ? `<span style="color: ${getImpactColor(issue.scoreImpact)}">⚡ Impact: ${issue.scoreImpact}</span>` : ''}
+          </div>
+        </div>
+        <div class="finding-card-toggle">▼</div>
+      </div>
+      <div class="finding-card-body">
+        <div class="finding-detail-grid">
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">Issue ID</div>
+            <div class="finding-detail-value" style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">${escapeHtml(issue.id || '—')}</div>
+          </div>
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">Security Domain</div>
+            <div class="finding-detail-value">${escapeHtml(issue.factor || '—')}</div>
+          </div>
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">Status</div>
+            <div class="finding-detail-value">${escapeHtml(issue.status || '—')}</div>
+          </div>
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">Score Impact</div>
+            <div class="finding-detail-value" style="color: ${getImpactColor(issue.scoreImpact)}; font-weight: 700;">${issue.scoreImpact || '—'}</div>
+          </div>
+        </div>
+        
+        <div class="finding-detail-grid">
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">First Seen</div>
+            <div class="finding-detail-value">${escapeHtml(issue.firstSeen || '—')}</div>
+          </div>
+          <div class="finding-detail-item">
+            <div class="finding-detail-label">Last Seen</div>
+            <div class="finding-detail-value">${escapeHtml(issue.lastSeen || '—')}</div>
+          </div>
+          ${issue.cve ? `
+            <div class="finding-detail-item">
+              <div class="finding-detail-label">CVE Reference</div>
+              <div class="finding-detail-value">
+                <a href="https://nvd.nist.gov/vuln/detail/${escapeHtml(issue.cve)}" target="_blank" rel="noopener noreferrer">${escapeHtml(issue.cve)} ↗</a>
+              </div>
+            </div>
+          ` : ''}
+          ${issue.ports ? `
+            <div class="finding-detail-item">
+              <div class="finding-detail-label">Ports</div>
+              <div class="finding-detail-value">${escapeHtml(issue.ports)}</div>
+            </div>
+          ` : ''}
+        </div>
+        
+        ${issue.hostname || issue.ip || issue.target ? `
+          <div class="finding-detail-grid">
+            ${issue.hostname ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Hostname</div>
+                <div class="finding-detail-value">
+                  ${issue.hostname.startsWith('http') ? `<a href="${escapeHtml(issue.hostname)}" target="_blank" rel="noopener noreferrer">${escapeHtml(issue.hostname)}</a>` : escapeHtml(issue.hostname)}
+                </div>
+              </div>
+            ` : ''}
+            ${issue.ip ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">IP Address</div>
+                <div class="finding-detail-value">${escapeHtml(issue.ip)}</div>
+              </div>
+            ` : ''}
+            ${issue.target ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Target</div>
+                <div class="finding-detail-value">
+                  ${issue.target.startsWith('http') ? `<a href="${escapeHtml(issue.target)}" target="_blank" rel="noopener noreferrer">${escapeHtml(truncate(issue.target, 50))}</a>` : escapeHtml(issue.target)}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        ${issue.initialUrl || issue.finalUrl ? `
+          <div class="finding-detail-grid">
+            ${issue.initialUrl ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Initial URL</div>
+                <div class="finding-detail-value">
+                  <a href="${escapeHtml(issue.initialUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(truncate(issue.initialUrl, 60))}</a>
+                </div>
+              </div>
+            ` : ''}
+            ${issue.finalUrl ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Final URL</div>
+                <div class="finding-detail-value">
+                  <a href="${escapeHtml(issue.finalUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(truncate(issue.finalUrl, 60))}</a>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        ${issue.product || issue.version || issue.provider ? `
+          <div class="finding-detail-grid">
+            ${issue.product ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Product</div>
+                <div class="finding-detail-value">${escapeHtml(issue.product)}</div>
+              </div>
+            ` : ''}
+            ${issue.version ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Version</div>
+                <div class="finding-detail-value">${escapeHtml(issue.version)}</div>
+              </div>
+            ` : ''}
+            ${issue.provider ? `
+              <div class="finding-detail-item">
+                <div class="finding-detail-label">Provider</div>
+                <div class="finding-detail-value">${escapeHtml(issue.provider)}</div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        ${issue.cookieName ? `
+          <div class="finding-section">
+            <div class="finding-section-title">Cookie Information</div>
+            <div class="finding-description">
+              <strong>Cookie Name:</strong> <code style="background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px;">${escapeHtml(issue.cookieName)}</code>
+            </div>
+          </div>
+        ` : ''}
+        
+        ${issue.description ? `
+          <div class="finding-section">
+            <div class="finding-section-title">Description</div>
+            <div class="finding-description">${escapeHtml(issue.description)}</div>
+          </div>
+        ` : ''}
+        
+        ${issue.analysis ? `
+          <div class="finding-section">
+            <div class="finding-section-title">Analysis</div>
+            <div class="finding-analysis">${escapeHtml(issue.analysis)}</div>
+          </div>
+        ` : ''}
+        
+        ${recommendationItems.length > 0 ? `
+          <div class="finding-section">
+            <div class="finding-section-title">Remediation Recommendations</div>
+            <div class="finding-recommendation">
+              ${recommendationItems.map(item => `
+                <div class="finding-recommendation-item">
+                  <span class="finding-recommendation-bullet">•</span>
+                  <span>${escapeHtml(item)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// Detailed findings page interaction functions
+function toggleFindingCard(index) {
+  const card = document.getElementById(`finding-card-${index}`);
+  if (card) {
+    card.classList.toggle('expanded');
+  }
+}
+
+function toggleAllFindings() {
+  const cards = document.querySelectorAll('.finding-card');
+  state.detailedFindingsExpanded = !state.detailedFindingsExpanded;
+  
+  cards.forEach(card => {
+    if (state.detailedFindingsExpanded) {
+      card.classList.add('expanded');
+    } else {
+      card.classList.remove('expanded');
+    }
+  });
+  
+  const btn = document.querySelector('.expand-all-btn');
+  if (btn) {
+    btn.innerHTML = state.detailedFindingsExpanded ? '⬆️ Collapse All' : '⬇️ Expand All';
+  }
+}
+
+function filterDetailedFindings(severity, btn) {
+  state.detailedFindingsSeverity = severity;
+  state.detailedFindingsPage = 1;
+  
+  // Update active button
+  document.querySelectorAll('.findings-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  // Get current data
+  const index = state.activeEntityIndex;
+  let data;
+  if (index === 'combined') {
+    data = getCombinedData(state.analyzedData);
+  } else {
+    data = state.analyzedData[index].data;
+  }
+  
+  const { byGroup } = data;
+  let findings;
+  
+  if (severity === 'ALL') {
+    findings = [
+      ...(byGroup.HIGH || []),
+      ...(byGroup.MEDIUM || []),
+      ...(byGroup.LOW || []),
+      ...(byGroup.INFO || [])
+    ];
+  } else {
+    findings = byGroup[severity] || [];
+  }
+  
+  // Store filtered findings for pagination
+  state.detailedFindingsFiltered = findings;
+  
+  // Render findings
+  const container = document.getElementById('detailed-findings-container');
+  if (container) {
+    container.innerHTML = renderDetailedFindingsList(findings, 1, 10);
+  }
+  
+  // Update pagination
+  updateDetailedPagination(findings.length);
+}
+
+function changeDetailedPage(delta) {
+  const index = state.activeEntityIndex;
+  let data;
+  if (index === 'combined') {
+    data = getCombinedData(state.analyzedData);
+  } else {
+    data = state.analyzedData[index].data;
+  }
+  
+  const { byGroup } = data;
+  let findings;
+  
+  if (state.detailedFindingsSeverity === 'ALL') {
+    findings = [
+      ...(byGroup.HIGH || []),
+      ...(byGroup.MEDIUM || []),
+      ...(byGroup.LOW || []),
+      ...(byGroup.INFO || [])
+    ];
+  } else {
+    findings = byGroup[state.detailedFindingsSeverity] || [];
+  }
+  
+  const totalPages = Math.ceil(findings.length / CONFIG.FINDINGS_PER_PAGE);
+  state.detailedFindingsPage = Math.max(1, Math.min(totalPages, state.detailedFindingsPage + delta));
+  
+  // Render findings
+  const container = document.getElementById('detailed-findings-container');
+  if (container) {
+    container.innerHTML = renderDetailedFindingsList(findings, state.detailedFindingsPage, CONFIG.FINDINGS_PER_PAGE);
+  }
+  
+  // Update pagination
+  updateDetailedPagination(findings.length);
+}
+
+function updateDetailedPagination(totalCount) {
+  const perPage = CONFIG.FINDINGS_PER_PAGE;
+  const totalPages = Math.ceil(totalCount / perPage);
+  const start = (state.detailedFindingsPage - 1) * perPage + 1;
+  const end = Math.min(state.detailedFindingsPage * perPage, totalCount);
+  
+  const prevBtn = document.getElementById('prev-page-btn');
+  const nextBtn = document.getElementById('next-page-btn');
+  const info = document.getElementById('pagination-info');
+  
+  if (prevBtn) prevBtn.disabled = state.detailedFindingsPage <= 1;
+  if (nextBtn) nextBtn.disabled = state.detailedFindingsPage >= totalPages;
+  if (info) info.textContent = `Showing ${start}-${end} of ${totalCount}`;
+}
+
 
 function renderRemediationRoadmap(data, entityName, pageNum, totalPages) {
   const { severity, byGroup } = data;
@@ -3402,10 +4256,7 @@ function switchTab(btn, paneId) {
 function showIssueDetails(issue) {
   elements.modalTitle.textContent = issue.title || 'Issue Details';
   
-  const cleanRecommendation = (issue.recommendation || '')
-    .replace(/^'- /gm, '• ')
-    .replace(/'-/g, '-')
-    .replace(/'/g, "'");
+  const cleanRecommendation = cleanRecommendationText(issue.recommendation);
   
   elements.modalBody.innerHTML = `
     <div class="detail-grid">
@@ -3955,7 +4806,137 @@ async function exportPDF() {
     
     addText(`Page 5`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
     
-    // Page 6: Remediation Roadmap
+    // Page 6: Detailed Findings with Recommendations
+    elements.pdfStatus.textContent = 'Generating detailed findings report...';
+    elements.pdfBar.style.width = '80%';
+    await sleep(100);
+    
+    pdf.addPage();
+    addText('DETAILED FINDINGS REPORT', margin, 20, { size: 14, style: 'bold', color: '#0ea5e9' });
+    addText('Complete findings with descriptions and recommendations', margin, 28, { size: 9, color: '#64748b' });
+    
+    // Combine all findings sorted by severity
+    const allFindings = [
+      ...(data.byGroup.HIGH || []).map(f => ({...f, sortOrder: 1})),
+      ...(data.byGroup.MEDIUM || []).map(f => ({...f, sortOrder: 2})),
+      ...(data.byGroup.LOW || []).map(f => ({...f, sortOrder: 3})),
+      ...(data.byGroup.INFO || []).map(f => ({...f, sortOrder: 4}))
+    ];
+    
+    let currentY = 38;
+    const maxY = pageHeight - 30;
+    let findingsOnPage = 0;
+    
+    for (let i = 0; i < Math.min(allFindings.length, CONFIG.MAX_FINDINGS_IN_PDF); i++) {
+      const finding = allFindings[i];
+      
+      // Check if we need a new page
+      if (currentY > maxY - 60 || findingsOnPage >= 5) {
+        pdf.addPage();
+        addText('DETAILED FINDINGS REPORT (continued)', margin, 20, { size: 14, style: 'bold', color: '#0ea5e9' });
+        currentY = 35;
+        findingsOnPage = 0;
+      }
+      
+      // Severity color
+      const sevColors = {
+        'HIGH': [239, 68, 68],
+        'MEDIUM': [234, 179, 8],
+        'LOW': [34, 197, 94],
+        'INFO': [139, 92, 246]
+      };
+      const sevColor = sevColors[finding.severity] || [100, 100, 100];
+      
+      // Finding header
+      pdf.setFillColor(sevColor[0], sevColor[1], sevColor[2]);
+      pdf.roundedRect(margin, currentY, 4, 12, 1, 1, 'F');
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(51, 51, 51);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(truncate(finding.title, 65), margin + 8, currentY + 8);
+      
+      // Severity badge
+      pdf.setFontSize(7);
+      pdf.setTextColor(sevColor[0], sevColor[1], sevColor[2]);
+      pdf.text(finding.severity, pageWidth - margin - 20, currentY + 8);
+      
+      currentY += 16;
+      
+      // Finding details table
+      const detailRows = [];
+      if (finding.factor) detailRows.push(['Domain', finding.factor]);
+      if (finding.hostname) detailRows.push(['Host', truncate(finding.hostname, 50)]);
+      if (finding.cve) detailRows.push(['CVE', finding.cve]);
+      if (finding.scoreImpact) detailRows.push(['Impact', finding.scoreImpact]);
+      if (finding.firstSeen) detailRows.push(['First Seen', finding.firstSeen]);
+      
+      if (detailRows.length > 0) {
+        pdf.autoTable({
+          startY: currentY,
+          body: detailRows,
+          theme: 'plain',
+          margin: { left: margin + 8, right: margin },
+          styles: { fontSize: 8, cellPadding: 1 },
+          columnStyles: {
+            0: { cellWidth: 25, textColor: [100, 116, 139], fontStyle: 'bold' },
+            1: { textColor: [51, 51, 51] }
+          }
+        });
+        currentY = pdf.lastAutoTable.finalY + 4;
+      }
+      
+      // Description (if available)
+      if (finding.description) {
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 116, 139);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Description:', margin + 8, currentY);
+        currentY += 4;
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(71, 85, 105);
+        const descLines = pdf.splitTextToSize(truncate(finding.description, 200), pageWidth - margin * 2 - 16);
+        pdf.text(descLines, margin + 8, currentY);
+        currentY += descLines.length * 3.5 + 4;
+      }
+      
+      // Recommendation (if available)
+      if (finding.recommendation) {
+        const cleanRec = cleanRecommendationText(finding.recommendation);
+        
+        if (cleanRec) {
+          pdf.setFontSize(8);
+          pdf.setTextColor(14, 165, 233);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Recommendation:', margin + 8, currentY);
+          currentY += 4;
+          
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(51, 51, 51);
+          const recLines = pdf.splitTextToSize(truncate(cleanRec, 300), pageWidth - margin * 2 - 16);
+          pdf.text(recLines, margin + 8, currentY);
+          currentY += recLines.length * 3.5 + 6;
+        }
+      }
+      
+      // Separator line
+      pdf.setDrawColor(230, 230, 230);
+      pdf.line(margin, currentY, pageWidth - margin, currentY);
+      currentY += 8;
+      
+      findingsOnPage++;
+    }
+    
+    if (allFindings.length > CONFIG.MAX_FINDINGS_IN_PDF) {
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text(`Showing ${CONFIG.MAX_FINDINGS_IN_PDF} of ${allFindings.length} findings. See web report for complete details.`, margin, currentY + 5);
+    }
+    
+    addText(`Page 6`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
+    
+    // Page 7: Remediation Roadmap
     elements.pdfStatus.textContent = 'Generating remediation roadmap...';
     elements.pdfBar.style.width = '90%';
     await sleep(100);
@@ -4008,7 +4989,7 @@ async function exportPDF() {
       styles: { fontSize: 8 }
     });
     
-    addText(`Page 6`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
+    addText(`Page 7`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
     
     // Save PDF
     elements.pdfBar.style.width = '100%';
@@ -4061,6 +5042,10 @@ window.switchEntity = switchEntity;
 window.switchTab = switchTab;
 window.showIssueDetails = showIssueDetails;
 window.showIssueById = showIssueById;
+window.toggleFindingCard = toggleFindingCard;
+window.toggleAllFindings = toggleAllFindings;
+window.filterDetailedFindings = filterDetailedFindings;
+window.changeDetailedPage = changeDetailedPage;
 </script>
 </body>
 </html>
