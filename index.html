@@ -2992,6 +2992,22 @@ function formatDate() {
   return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+// Configuration constants
+const CONFIG = {
+  MAX_FINDINGS_IN_PDF: 25,
+  FINDINGS_PER_PAGE: 10
+};
+
+// Clean recommendation text by removing SecurityScorecard formatting artifacts
+function cleanRecommendationText(recommendation) {
+  if (!recommendation) return '';
+  return recommendation
+    .replace(/^'- /gm, '• ')
+    .replace(/'-/g, '-')
+    .replace(/'/g, "'")
+    .trim();
+}
+
 function getSeverityColor(sev) {
   const colors = { HIGH: '#ef4444', MEDIUM: '#eab308', LOW: '#22c55e', INFO: '#8b5cf6' };
   return colors[sev] || '#64748b';
@@ -3799,11 +3815,7 @@ function renderDetailedFindingsList(findings, page, perPage) {
 }
 
 function renderDetailedFindingCard(issue, index) {
-  const cleanRecommendation = (issue.recommendation || '')
-    .replace(/^'- /gm, '• ')
-    .replace(/'-/g, '-')
-    .replace(/'/g, "'")
-    .trim();
+  const cleanRecommendation = cleanRecommendationText(issue.recommendation);
   
   const recommendationItems = cleanRecommendation
     .split(/\n|(?:• )/)
@@ -4077,13 +4089,13 @@ function changeDetailedPage(delta) {
     findings = byGroup[state.detailedFindingsSeverity] || [];
   }
   
-  const totalPages = Math.ceil(findings.length / 10);
+  const totalPages = Math.ceil(findings.length / CONFIG.FINDINGS_PER_PAGE);
   state.detailedFindingsPage = Math.max(1, Math.min(totalPages, state.detailedFindingsPage + delta));
   
   // Render findings
   const container = document.getElementById('detailed-findings-container');
   if (container) {
-    container.innerHTML = renderDetailedFindingsList(findings, state.detailedFindingsPage, 10);
+    container.innerHTML = renderDetailedFindingsList(findings, state.detailedFindingsPage, CONFIG.FINDINGS_PER_PAGE);
   }
   
   // Update pagination
@@ -4091,7 +4103,7 @@ function changeDetailedPage(delta) {
 }
 
 function updateDetailedPagination(totalCount) {
-  const perPage = 10;
+  const perPage = CONFIG.FINDINGS_PER_PAGE;
   const totalPages = Math.ceil(totalCount / perPage);
   const start = (state.detailedFindingsPage - 1) * perPage + 1;
   const end = Math.min(state.detailedFindingsPage * perPage, totalCount);
@@ -4244,10 +4256,7 @@ function switchTab(btn, paneId) {
 function showIssueDetails(issue) {
   elements.modalTitle.textContent = issue.title || 'Issue Details';
   
-  const cleanRecommendation = (issue.recommendation || '')
-    .replace(/^'- /gm, '• ')
-    .replace(/'-/g, '-')
-    .replace(/'/g, "'");
+  const cleanRecommendation = cleanRecommendationText(issue.recommendation);
   
   elements.modalBody.innerHTML = `
     <div class="detail-grid">
@@ -4817,9 +4826,8 @@ async function exportPDF() {
     let currentY = 38;
     const maxY = pageHeight - 30;
     let findingsOnPage = 0;
-    const maxFindingsInPdf = 25; // Limit for PDF size
     
-    for (let i = 0; i < Math.min(allFindings.length, maxFindingsInPdf); i++) {
+    for (let i = 0; i < Math.min(allFindings.length, CONFIG.MAX_FINDINGS_IN_PDF); i++) {
       const finding = allFindings[i];
       
       // Check if we need a new page
@@ -4895,11 +4903,7 @@ async function exportPDF() {
       
       // Recommendation (if available)
       if (finding.recommendation) {
-        const cleanRec = (finding.recommendation || '')
-          .replace(/^'- /gm, '• ')
-          .replace(/'-/g, '-')
-          .replace(/'/g, "'")
-          .trim();
+        const cleanRec = cleanRecommendationText(finding.recommendation);
         
         if (cleanRec) {
           pdf.setFontSize(8);
@@ -4924,10 +4928,10 @@ async function exportPDF() {
       findingsOnPage++;
     }
     
-    if (allFindings.length > maxFindingsInPdf) {
+    if (allFindings.length > CONFIG.MAX_FINDINGS_IN_PDF) {
       pdf.setFontSize(8);
       pdf.setTextColor(100, 116, 139);
-      pdf.text(`Showing ${maxFindingsInPdf} of ${allFindings.length} findings. See web report for complete details.`, margin, currentY + 5);
+      pdf.text(`Showing ${CONFIG.MAX_FINDINGS_IN_PDF} of ${allFindings.length} findings. See web report for complete details.`, margin, currentY + 5);
     }
     
     addText(`Page 6`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
