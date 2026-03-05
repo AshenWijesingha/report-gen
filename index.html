@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HNB Cyber Intelligence — Vulnerability Report Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ TOKENS ━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  --ink:     #06090F;
+  --ink2:    #0B1120;
+  --ink3:    #111827;
+  --slate:   #1C2A3F;
+  --wire:    #243348;
+  --wire2:   #2E405A;
+  --fog:     #64748B;
+  --mist:    #94A3B8;
+  --cloud:   #CBD5E1;
+  --snow:    #E8EFF8;
+  --cyan:    #06B6D4;
+  --cyan2:   #22D3EE;
+  --red:     #EF4444;
+  --amber:   #F59E0B;
+  --emerald: #10B981;
+  --violet:  #8B5CF6;
+  --red-bg:  #0F0505;
+  --red-br:  #5B1A1A;
+  --amb-bg:  #0F0A02;
+  --amb-br:  #5C3A0A;
+  --em-bg:   #021109;
+  --em-br:   #064030;
+  --vi-bg:   #06030F;
+  --vi-br:   #2D1B5E;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--ink);
+  color:var(--snow);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ UPLOAD SCREEN ━━━━━━━━━━━━━━━━━━ */
+#upload-screen{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* animated background grid */
+#upload-screen::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(6,182,212,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(6,182,212,.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  animation:gridDrift 30s linear infinite;
+}
+@keyframes gridDrift{to{background-position:48px 48px}}
+
+/* radial glow */
+#upload-screen::after{
+  content:'';
+  position:absolute;
+  top:-20%;left:50%;transform:translateX(-50%);
+  width:800px;height:600px;
+  background:radial-gradient(ellipse,rgba(6,182,212,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.upload-inner{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;width:100%;max-width:680px;
+}
+
+/* logo */
+.u-logo{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:48px;
+}
+.u-logo-icon{
+  width:52px;height:52px;
+  background:linear-gradient(135deg,var(--cyan),#0891B2);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;
+  box-shadow:0 0 40px rgba(6,182,212,.3);
+}
+.u-logo-text{
+  display:flex;flex-direction:column;
+}
+.u-logo-main{
+  font-size:22px;font-weight:800;letter-spacing:3px;
+  color:var(--snow);text-transform:uppercase;
+}
+.u-logo-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;color:var(--fog);letter-spacing:3px;text-transform:uppercase;
+  margin-top:2px;
+}
+
+/* headline */
+.u-headline{
+  font-size:52px;font-weight:800;
+  line-height:.95;letter-spacing:-1px;
+  text-align:center;margin-bottom:14px;
+  color:var(--snow);
+}
+.u-headline span{
+  background:linear-gradient(90deg,var(--cyan),var(--cyan2),#A5F3FC);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.u-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--fog);
+  letter-spacing:1px;text-align:center;
+  margin-bottom:52px;
+}
+
+/* drop zone */
+.dropzone{
+  width:100%;
+  border:2px dashed var(--wire2);
+  border-radius:16px;
+  background:rgba(11,17,32,.6);
+  backdrop-filter:blur(12px);
+  padding:60px 40px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  cursor:pointer;
+  transition:all .25s ease;
+  position:relative;
+  overflow:hidden;
+}
+.dropzone::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(6,182,212,.04),transparent 70%);
+  opacity:0;transition:opacity .3s;
+}
+.dropzone:hover,
+.dropzone.drag-over{
+  border-color:var(--cyan);
+  background:rgba(6,182,212,.04);
+  box-shadow:0 0 60px rgba(6,182,212,.1),inset 0 0 60px rgba(6,182,212,.04);
+}
+.dropzone:hover::before,
+.dropzone.drag-over::before{opacity:1}
+
+.dropzone-icon{
+  width:64px;height:64px;
+  background:rgba(6,182,212,.08);
+  border:1px solid rgba(6,182,212,.2);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+}
+.dropzone-title{
+  font-size:18px;font-weight:700;color:var(--snow);
+}
+.dropzone-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--fog);
+  text-align:center;line-height:1.6;
+}
+.browse-btn{
+  background:linear-gradient(135deg,var(--cyan),#0891B2);
+  color:#fff;border:none;
+  padding:11px 28px;border-radius:8px;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:.5px;
+  transition:all .2s;
+  box-shadow:0 0 24px rgba(6,182,212,.25);
+}
+.browse-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 40px rgba(6,182,212,.4);
+}
+
+input[type=file]{display:none}
+
+/* file pills */
+.file-pills{
+  display:flex;flex-direction:column;gap:10px;
+  width:100%;margin-top:24px;
+}
+.file-pill{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(11,17,32,.8);
+  border:1px solid var(--wire);
+  border-radius:10px;padding:12px 16px;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.file-pill-icon{font-size:18px}
+.file-pill-info{flex:1;min-width:0}
+.file-pill-name{
+  font-size:13px;font-weight:600;color:var(--snow);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.file-pill-size{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--fog);margin-top:2px;
+}
+.file-pill-remove{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);
+  color:var(--red);width:26px;height:26px;border-radius:6px;
+  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;
+}
+.file-pill-remove:hover{background:rgba(239,68,68,.2)}
+
+/* entity name field */
+.entity-fields{
+  width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin-top:20px;
+}
+.field-wrap{display:flex;flex-direction:column;gap:6px}
+.field-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;color:var(--fog);letter-spacing:2px;text-transform:uppercase;
+}
+.field-input{
+  background:rgba(11,17,32,.8);
+  border:1px solid var(--wire);
+  border-radius:8px;padding:10px 14px;
+  color:var(--snow);font-family:'Syne',sans-serif;font-size:13px;
+  outline:none;transition:border-color .2s;width:100%;
+}
+.field-input:focus{border-color:var(--cyan);}
+.field-input::placeholder{color:var(--fog)}
+
+/* generate button */
+.gen-btn{
+  width:100%;margin-top:28px;
+  padding:16px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,#06B6D4,#0891B2,#0369A1);
+  color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;
+  letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 0 60px rgba(6,182,212,.3);
+  transition:all .25s;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  position:relative;overflow:hidden;
+}
+.gen-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  transform:translateX(-100%);
+  transition:transform .5s;
+}
+.gen-btn:hover::before{transform:translateX(100%)}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 0 80px rgba(6,182,212,.5)}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* features row */
+.features{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-top:48px;width:100%;
+}
+.feat{
+  background:rgba(11,17,32,.5);border:1px solid var(--wire);
+  border-radius:10px;padding:16px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.feat-icon{font-size:20px}
+.feat-title{font-size:12px;font-weight:700;color:var(--cloud)}
+.feat-body{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fog);line-height:1.5}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ LOADING ━━━━━━━━━━━━━━━━━━━━━━━━ */
+#loading-screen{
+  position:fixed;inset:0;background:var(--ink);z-index:9999;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+}
+#loading-screen.show{display:flex}
+.load-title{
+  font-size:32px;font-weight:800;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--cyan),var(--cyan2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.load-bar-wrap{width:320px;height:3px;background:var(--wire);border-radius:2px;overflow:hidden}
+.load-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--cyan2));border-radius:2px;width:0%;transition:width .3s ease}
+.load-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fog)}
+.load-dots{display:flex;gap:6px}
+.load-dot{width:6px;height:6px;border-radius:50%;background:var(--wire2);animation:dotPulse 1.2s ease infinite}
+.load-dot:nth-child(2){animation-delay:.2s}
+.load-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,80%,100%{opacity:.2}40%{opacity:1;background:var(--cyan)}}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ REPORT SCREEN ━━━━━━━━━━━━━━━━━━ */
+#report-screen{display:none}
+#report-screen.show{display:block}
+
+/* ── toolbar ── */
+#toolbar{
+  position:fixed;top:0;left:0;right:0;z-index:8888;
+  background:rgba(6,9,15,.96);
+  border-bottom:1px solid var(--wire);
+  backdrop-filter:blur(16px);
+  padding:0 28px;height:56px;
+  display:flex;align-items:center;gap:16px;
+}
+.tb-brand{
+  font-size:14px;font-weight:800;letter-spacing:2px;
+  color:var(--snow);margin-right:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.tb-brand-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.tb-sep{width:1px;height:28px;background:var(--wire);margin:0 4px}
+
+.tb-entity-btn{
+  padding:6px 16px;border-radius:6px;
+  background:transparent;border:1px solid var(--wire);
+  color:var(--fog);font-family:'Syne',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.tb-entity-btn.active{
+  background:rgba(6,182,212,.12);border-color:var(--cyan);color:var(--cyan);
+}
+.tb-entity-btn:hover:not(.active){border-color:var(--wire2);color:var(--mist)}
+
+.tb-spacer{flex:1}
+
+.tb-action{
+  padding:8px 20px;border-radius:7px;border:none;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;
+}
+.tb-back{
+  background:transparent;border:1px solid var(--wire);color:var(--fog);
+}
+.tb-back:hover{border-color:var(--wire2);color:var(--mist)}
+.tb-print{background:rgba(255,255,255,.05);border:1px solid var(--wire2);color:var(--cloud)}
+.tb-print:hover{background:rgba(255,255,255,.09)}
+.tb-pdf{
+  background:linear-gradient(135deg,var(--cyan),#0891B2);color:#fff;
+  box-shadow:0 0 24px rgba(6,182,212,.3);
+}
+.tb-pdf:hover{box-shadow:0 0 40px rgba(6,182,212,.5);transform:translateY(-1px)}
+
+/* ── pages wrapper ── */
+#pages{
+  padding:72px 32px 48px;
+  display:flex;flex-direction:column;align-items:center;gap:28px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ A4 PAGE BASE ━━━━━━━━━━━━━━━━━━━ */
+.pg{
+  width:794px;
+  background:var(--ink2);
+  border:1px solid var(--wire);
+  border-radius:2px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.7);
+  page-break-after:always;
+}
+
+/* page header stripe */
+.pg-head{
+  background:var(--ink);
+  border-bottom:1px solid var(--wire);
+  padding:14px 36px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pg-section{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;
+}
+.pg-entity{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;color:var(--fog);letter-spacing:1px;
+}
+
+/* page footer */
+.pg-foot{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--ink);border-top:1px solid var(--wire);
+  padding:10px 36px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pg-foot-txt{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--fog)}
+.pg-num{
+  font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--fog);
+  display:flex;align-items:center;gap:6px;
+}
+.pg-num::before{content:'';display:block;width:16px;height:1px;background:var(--wire2)}
+
+/* left accent bar */
+.pg-accent{
+  position:absolute;left:0;top:0;width:3px;height:100%;
+  background:linear-gradient(180deg,var(--cyan),#0891B2,transparent);
+}
+
+/* body area */
+.pg-body{padding:26px 36px 60px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ COVER PAGE ━━━━━━━━━━━━━━━━━━━━━ */
+.pg-cover{min-height:1123px;background:var(--ink);display:flex;flex-direction:column}
+
+.cv-grid-bg{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(6,182,212,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(6,182,212,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+.cv-top{
+  position:relative;z-index:2;
+  padding:48px 56px 0;
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.cv-logo{display:flex;align-items:center;gap:14px}
+.cv-logo-mark{
+  width:50px;height:50px;
+  background:linear-gradient(135deg,var(--cyan),#0891B2);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 0 32px rgba(6,182,212,.3);
+}
+.cv-logo-name{font-size:24px;font-weight:800;letter-spacing:3px;color:var(--snow)}
+.cv-logo-tag{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog);letter-spacing:2px;margin-top:3px;text-transform:uppercase}
+.cv-meta{text-align:right;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog);line-height:2}
+
+.cv-main{
+  position:relative;z-index:2;flex:1;
+  padding:0 56px;display:flex;flex-direction:column;justify-content:center;
+}
+.cv-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:4px;color:var(--cyan);text-transform:uppercase;
+  margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.cv-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--cyan)}
+.cv-title{
+  font-size:68px;font-weight:800;line-height:.9;
+  letter-spacing:-1px;color:var(--snow);margin-bottom:8px;
+}
+.cv-title em{
+  font-style:normal;display:block;
+  background:linear-gradient(90deg,var(--cyan),var(--cyan2),#A5F3FC);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.cv-desc{font-size:13px;color:var(--fog);font-weight:400;max-width:400px;line-height:1.5;margin-bottom:44px}
+.cv-entity-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.2);
+  border-radius:8px;padding:10px 18px;
+  font-size:13px;font-weight:600;color:var(--cyan2);margin-bottom:44px;
+  width:fit-content;
+}
+.cv-kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--wire);
+  border:1px solid var(--wire);border-radius:10px;overflow:hidden;
+  margin-bottom:44px;
+}
+.cv-kpi{background:var(--ink2);padding:18px 16px;display:flex;flex-direction:column;gap:4px}
+.cv-kpi-n{font-size:40px;font-weight:800;line-height:1;letter-spacing:-1px}
+.cv-kpi-l{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.cv-classified{display:flex;align-items:center;gap:14px}
+.cv-badge{
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
+  color:var(--red);font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:3px;padding:5px 12px;border-radius:4px;
+  text-transform:uppercase;
+}
+.cv-classified-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog)}
+.cv-footer{
+  position:relative;z-index:2;
+  padding:24px 56px;border-top:1px solid var(--wire);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cv-footer-l{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog);line-height:1.8}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ TOC PAGE ━━━━━━━━━━━━━━━━━━━━━━━ */
+.toc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px}
+.toc-title{font-size:40px;font-weight:800;letter-spacing:-1px;color:var(--snow)}
+.toc-title small{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:3px;margin-bottom:8px;text-transform:uppercase}
+.toc-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog);text-align:right;line-height:2}
+.toc-row{
+  display:flex;align-items:center;gap:18px;
+  padding:18px 0;border-bottom:1px solid var(--wire);
+}
+.toc-row:last-child{border-bottom:none}
+.toc-num{
+  font-size:28px;font-weight:800;color:var(--wire2);letter-spacing:1px;min-width:44px;
+  font-variant-numeric:tabular-nums;
+}
+.toc-info{flex:1}
+.toc-section-name{font-size:14px;font-weight:700;color:var(--snow)}
+.toc-section-desc{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog);margin-top:2px}
+.toc-dots{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--wire) 0,var(--wire) 4px,transparent 4px,transparent 10px);max-width:120px}
+.toc-pg{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);font-weight:700}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ SECTION HEADING ━━━━━━━━━━━━━━━━ */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sec-head-icon{
+  width:30px;height:30px;border-radius:7px;
+  background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.sec-head-text{}
+.sec-head-title{font-size:15px;font-weight:700;color:var(--snow)}
+.sec-head-sub{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.sec-div{height:1px;background:linear-gradient(90deg,var(--wire2),transparent);margin-bottom:20px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ SEVERITY BADGES ━━━━━━━━━━━━━━━━ */
+.sev{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.sev::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sev-H{background:var(--red-bg);color:var(--red);border:1px solid var(--red-br)}
+.sev-H::before{background:var(--red);box-shadow:0 0 5px var(--red)}
+.sev-M{background:var(--amb-bg);color:var(--amber);border:1px solid var(--amb-br)}
+.sev-M::before{background:var(--amber);box-shadow:0 0 5px var(--amber)}
+.sev-L{background:var(--em-bg);color:var(--emerald);border:1px solid var(--em-br)}
+.sev-L::before{background:var(--emerald);box-shadow:0 0 5px var(--emerald)}
+.sev-I{background:var(--vi-bg);color:var(--violet);border:1px solid var(--vi-br)}
+.sev-I::before{background:var(--violet);box-shadow:0 0 5px var(--violet)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ KPI CARDS ━━━━━━━━━━━━━━━━━━━━━━ */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.kpi-card{
+  border-radius:8px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:4px;border:1px solid;
+}
+.kpi-H{background:var(--red-bg);border-color:var(--red-br)}
+.kpi-M{background:var(--amb-bg);border-color:var(--amb-br)}
+.kpi-L{background:var(--em-bg);border-color:var(--em-br)}
+.kpi-I{background:var(--vi-bg);border-color:var(--vi-br)}
+.kpi-n{font-size:40px;font-weight:800;line-height:1;letter-spacing:-1px}
+.kpi-H .kpi-n{color:var(--red)}
+.kpi-M .kpi-n{color:var(--amber)}
+.kpi-L .kpi-n{color:var(--emerald)}
+.kpi-I .kpi-n{color:var(--violet)}
+.kpi-l{font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mist)}
+.kpi-p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ DONUT ━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.exec-split{display:grid;grid-template-columns:190px 1fr;gap:18px;margin-bottom:18px}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.donut-legend{width:100%}
+.dl-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mist);padding:3px 0}
+.dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.dl-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700}
+.dl-pct{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog);margin-left:3px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ PROGRESS ━━━━━━━━━━━━━━━━━━━━━━━ */
+.prog-row{margin-bottom:11px}
+.prog-hdr{display:flex;justify-content:space-between;margin-bottom:4px}
+.prog-name{font-size:11px;font-weight:600;color:var(--snow)}
+.prog-val{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700}
+.prog-bg{height:4px;background:var(--wire);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ RISK CARDS ━━━━━━━━━━━━━━━━━━━━━ */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.risk-card{background:var(--ink);border:1px solid var(--wire);border-radius:7px;padding:13px}
+.risk-card-title{font-size:11px;font-weight:700;color:var(--snow);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.risk-card-body{font-size:10px;color:var(--fog);line-height:1.55}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ TABLES ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.tbl{width:100%;border-collapse:collapse;font-size:10px}
+.tbl th{
+  background:var(--ink);color:var(--fog);
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  text-transform:uppercase;letter-spacing:1.5px;
+  padding:8px 10px;text-align:left;
+  border-bottom:1px solid var(--wire);font-weight:400;
+}
+.tbl td{
+  padding:7px 10px;border-bottom:1px solid rgba(36,51,72,.5);
+  color:var(--mist);vertical-align:top;line-height:1.4;
+}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(6,182,212,.025)}
+.td-title{color:var(--snow);font-weight:600;font-size:10.5px;max-width:200px}
+.td-host{
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog);
+  display:block;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  margin-top:2px;
+}
+.cve-pill{
+  background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);
+  color:#A78BFA;font-family:'JetBrains Mono',monospace;
+  font-size:8px;padding:2px 6px;border-radius:3px;white-space:nowrap;
+}
+.impact{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ DOMAIN CARDS ━━━━━━━━━━━━━━━━━━━ */
+.domain-card{
+  background:var(--ink);border:1px solid var(--wire);
+  border-radius:8px;padding:14px;margin-bottom:10px;
+}
+.domain-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.domain-name{font-size:13px;font-weight:700;color:var(--snow)}
+.domain-count{font-size:26px;font-weight:800;line-height:1;color:var(--cyan)}
+.domain-share{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog)}
+.domain-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;gap:1px;margin-bottom:8px}
+.domain-pills{display:flex;gap:14px}
+.domain-pill{font-family:'JetBrains Mono',monospace;font-size:9px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ CVE PAGE ━━━━━━━━━━━━━━━━━━━━━━━ */
+.cve-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.cve-stat{
+  background:var(--ink);border-radius:8px;padding:14px;text-align:center;border:1px solid;
+}
+.cve-stat-n{font-size:34px;font-weight:800;line-height:1}
+.cve-stat-l{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog);letter-spacing:1px;text-transform:uppercase;margin-top:5px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ TABS ━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.tab-bar{
+  display:flex;gap:2px;background:var(--ink);
+  padding:4px;border-radius:8px;border:1px solid var(--wire);
+  margin-bottom:14px;
+}
+.tab-btn{
+  flex:1;padding:7px;background:none;border:none;
+  color:var(--fog);font-family:'Syne',sans-serif;font-size:11px;font-weight:600;
+  cursor:pointer;border-radius:5px;transition:all .15s;
+}
+.tab-btn.on{background:var(--ink2);color:var(--snow);border:1px solid var(--wire2)}
+.tab-pane{display:none}
+.tab-pane.on{display:block}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ REMEDIATION ━━━━━━━━━━━━━━━━━━━━ */
+.priority-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.priority-chip{
+  border-radius:7px;padding:10px;text-align:center;border:1px solid;
+}
+.p1{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2)}
+.p2{background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.2)}
+.p3{background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.2)}
+.priority-chip-label{font-size:18px;font-weight:800;letter-spacing:1px}
+.p1 .priority-chip-label{color:var(--red)}
+.p2 .priority-chip-label{color:var(--amber)}
+.p3 .priority-chip-label{color:var(--emerald)}
+.priority-chip-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog);margin-top:3px}
+
+.rec-card{
+  background:var(--ink);border:1px solid var(--wire);
+  border-radius:8px;padding:14px;margin-bottom:10px;
+  display:flex;gap:12px;
+}
+.rec-p-badge{
+  width:34px;height:34px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;border:1px solid;
+}
+.rec-p-badge.p1{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:var(--red)}
+.rec-p-badge.p2{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:var(--amber)}
+.rec-p-badge.p3{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:var(--emerald)}
+.rec-body{}
+.rec-title{font-size:12px;font-weight:700;color:var(--snow);margin-bottom:5px}
+.rec-desc{font-size:10px;color:var(--fog);line-height:1.5}
+.rec-timeline{
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--cyan);
+  margin-top:6px;display:flex;align-items:center;gap:5px;
+}
+.rec-timeline::before{content:'▸';font-size:8px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━ PDF EXPORT OVERLAY ━━━━━━━━━━━━━ */
+#pdf-overlay{
+  position:fixed;inset:0;background:rgba(6,9,15,.93);z-index:99999;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+}
+#pdf-overlay.show{display:flex}
+.pdf-title{font-size:26px;font-weight:800;letter-spacing:4px;color:var(--cyan)}
+.pdf-bar-bg{width:300px;height:3px;background:var(--wire);border-radius:2px;overflow:hidden}
+.pdf-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--cyan2));width:0%;transition:width .3s ease}
+.pdf-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fog)}
+
+@media print{
+  #toolbar,#upload-screen,#loading-screen,#pdf-overlay{display:none!important}
+  #pages{padding:0;gap:0}
+  .pg{box-shadow:none;border:none;page-break-after:always;border-radius:0}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     UPLOAD SCREEN
+════════════════════════════════════════════════════════ -->
+<div id="upload-screen">
+  <div class="upload-inner">
+
+    <div class="u-logo">
+      <div class="u-logo-icon">🛡</div>
+      <div class="u-logo-text">
+        <div class="u-logo-main">HNB Cyber Intel</div>
+        <div class="u-logo-sub">Vulnerability Report Platform</div>
+      </div>
+    </div>
+
+    <h1 class="u-headline">
+      Upload. Analyze.<br><span>Report.</span>
+    </h1>
+    <p class="u-sub">Drop your SecurityScorecard CSV exports below — reports generate instantly</p>
+
+    <!-- DROP ZONE -->
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+      <div class="dropzone-icon">📂</div>
+      <div class="dropzone-title">Drop CSV files here</div>
+      <div class="dropzone-sub">
+        Supports SecurityScorecard Full Issues Report exports<br>
+        You can upload multiple entity files at once
+      </div>
+      <button class="browse-btn" onclick="event.stopPropagation();document.getElementById('file-input').click()">
+        Browse Files
+      </button>
+      <input type="file" id="file-input" accept=".csv" multiple>
+    </div>
+
+    <!-- FILE PILLS -->
+    <div class="file-pills" id="file-pills"></div>
+
+    <!-- ENTITY LABELS -->
+    <div class="entity-fields" id="entity-fields" style="display:none"></div>
+
+    <!-- GENERATE -->
+    <button class="gen-btn" id="gen-btn" disabled onclick="generateReport()">
+      <span>⚡</span>
+      <span>Generate Vulnerability Report</span>
+    </button>
+
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Auto-Analysis</div>
+        <div class="feat-body">Severity breakdown, domain analysis, CVE registry — all computed automatically</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📄</div>
+        <div class="feat-title">PDF Export</div>
+        <div class="feat-body">Export professional A4-sized PDF reports ready for executive presentation</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🔀</div>
+        <div class="feat-title">Multi-Entity</div>
+        <div class="feat-body">Compare multiple entities side-by-side or view combined group totals</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     LOADING SCREEN
+════════════════════════════════════════════════════════ -->
+<div id="loading-screen">
+  <div class="load-dots">
+    <div class="load-dot"></div>
+    <div class="load-dot"></div>
+    <div class="load-dot"></div>
+  </div>
+  <div class="load-title">ANALYZING DATA</div>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+  <div class="load-status" id="load-status">Parsing CSV files…</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     REPORT SCREEN
+════════════════════════════════════════════════════════ -->
+<div id="report-screen">
+  <div id="toolbar">
+    <div class="tb-brand"><div class="tb-brand-dot"></div>HNB CYBER REPORT</div>
+    <div class="tb-sep"></div>
+    <div id="entity-btns"></div>
+    <div class="tb-spacer"></div>
+    <button class="tb-action tb-back" onclick="goBack()">← New Report</button>
+    <button class="tb-action tb-print" onclick="window.print()">🖨 Print</button>
+    <button class="tb-action tb-pdf" onclick="exportPDF()">📄 Export PDF</button>
+  </div>
+  <div id="pages"></div>
+</div>
+
+<!-- PDF Overlay -->
+<div id="pdf-overlay">
+  <div class="pdf-title">GENERATING PDF</div>
+  <div class="pdf-bar-bg"><div class="pdf-bar" id="pdf-bar"></div></div>
+  <div class="pdf-status" id="pdf-status">Initializing…</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let parsedEntities = [];   // [{name, rows}]
+let activeEntity   = 0;
+
+// ═══════════════════════════════════════════════
+//  FILE UPLOAD LOGIC
+// ═══════════════════════════════════════════════
+const dropzone  = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+const filePills = document.getElementById('file-pills');
+const entityFields = document.getElementById('entity-fields');
+const genBtn    = document.getElementById('gen-btn');
+
+let stagedFiles = [];
+
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault(); dropzone.classList.remove('drag-over');
+  handleFiles([...e.dataTransfer.files].filter(f => f.name.endsWith('.csv')));
+});
+fileInput.addEventListener('change', () => {
+  handleFiles([...fileInput.files]);
+  fileInput.value = '';
+});
+
+function handleFiles(files) {
+  files.forEach(f => {
+    if (!stagedFiles.find(x => x.name === f.name)) {
+      stagedFiles.push(f);
+    }
+  });
+  renderPills();
+}
+
+function renderPills() {
+  filePills.innerHTML = stagedFiles.map((f, i) => `
+    <div class="file-pill">
+      <div class="file-pill-icon">📄</div>
+      <div class="file-pill-info">
+        <div class="file-pill-name">${f.name}</div>
+        <div class="file-pill-size">${(f.size/1024).toFixed(1)} KB</div>
+      </div>
+      <button class="file-pill-remove" onclick="removeFile(${i})">✕</button>
+    </div>
+  `).join('');
+
+  // entity name inputs
+  if (stagedFiles.length > 0) {
+    entityFields.style.display = 'grid';
+    entityFields.innerHTML = stagedFiles.map((f, i) => {
+      const defaultName = guessEntityName(f.name);
+      return `
+        <div class="field-wrap">
+          <div class="field-label">Entity Name for File ${i+1}</div>
+          <input class="field-input" id="ename-${i}" type="text" value="${defaultName}" placeholder="e.g. HNB Assurance">
+        </div>`;
+    }).join('');
+    genBtn.disabled = false;
+  } else {
+    entityFields.style.display = 'none';
+    genBtn.disabled = true;
+  }
+}
+
+function removeFile(i) {
+  stagedFiles.splice(i, 1);
+  renderPills();
+}
+
+function guessEntityName(filename) {
+  // Try to extract a nice name from filename like "Hnbassurance-FullIssuesReport-..."
+  const m = filename.match(/^([^-_]+)/i);
+  if (m) {
+    return m[1].replace(/([a-z])([A-Z])/g, '$1 $2')
+               .replace(/\b\w/g, c => c.toUpperCase())
+               .trim();
+  }
+  return filename.replace(/\.csv$/i, '');
+}
+
+// ═══════════════════════════════════════════════
+//  CSV PARSING
+// ═══════════════════════════════════════════════
+async function generateReport() {
+  if (!stagedFiles.length) return;
+
+  // Show loading
+  document.getElementById('upload-screen').style.display = 'none';
+  const ls = document.getElementById('loading-screen');
+  ls.classList.add('show');
+
+  const bar = document.getElementById('load-bar');
+  const status = document.getElementById('load-status');
+
+  parsedEntities = [];
+
+  for (let i = 0; i < stagedFiles.length; i++) {
+    const f   = stagedFiles[i];
+    const nm  = document.getElementById(`ename-${i}`).value.trim() || f.name;
+    status.textContent = `Parsing ${nm}…`;
+    bar.style.width = ((i / stagedFiles.length) * 80) + '%';
+
+    const text = await f.text();
+    const result = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: h => h.trim(),
+    });
+    parsedEntities.push({ name: nm, rows: result.data });
+    await sleep(80);
+  }
+
+  bar.style.width = '90%';
+  status.textContent = 'Crunching numbers…';
+  await sleep(200);
+
+  bar.style.width = '100%';
+  status.textContent = 'Rendering report…';
+  await sleep(150);
+
+  ls.classList.remove('show');
+  buildReport();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════
+//  DATA ANALYSIS
+// ═══════════════════════════════════════════════
+function analyzeEntity(rows) {
+  const sev     = { HIGH:0, MEDIUM:0, LOW:0, INFO:0 };
+  const factors = {};
+  const titleMap = {};
+  const cveSet  = new Set();
+  const byGroup = { HIGH:[], MEDIUM:[], LOW:[], INFO:[] };
+
+  rows.forEach(r => {
+    const s = (r['ISSUE TYPE SEVERITY'] || '').trim().toUpperCase();
+    const f = (r['FACTOR NAME'] || '').trim();
+    const t = (r['ISSUE TYPE TITLE'] || '').trim();
+    const cve = (r['CVE'] || '').trim();
+
+    if (s in sev) sev[s]++;
+    if (f) factors[f] = (factors[f] || 0) + 1;
+    if (t) titleMap[t] = (titleMap[t] || 0) + 1;
+    if (cve) cveSet.add(cve);
+
+    const rec = {
+      title:       t,
+      factor:      f,
+      severity:    s,
+      cve:         cve,
+      hostname:    (r['HOSTNAME'] || '').trim(),
+      ip:          (r['IP ADDRESSES'] || '').trim(),
+      ports:       (r['PORTS'] || '').trim(),
+      last_seen:   (r['LAST SEEN'] || '').trim(),
+      first_seen:  (r['FIRST SEEN'] || '').trim(),
+      score_impact:(r['ISSUE TYPE SCORE IMPACT'] || '').trim(),
+      recommendation:(r['ISSUE RECOMMENDATION'] || '').trim().slice(0, 400),
+    };
+
+    if (s in byGroup) byGroup[s].push(rec);
+  });
+
+  const topTitles = Object.entries(titleMap).sort((a,b)=>b[1]-a[1]);
+  return { total: rows.length, sev, factors, topTitles, cves: [...cveSet], byGroup };
+}
+
+function getCombined(entities) {
+  const sev     = { HIGH:0, MEDIUM:0, LOW:0, INFO:0 };
+  const factors = {};
+  const titleMap = {};
+  const cveSet  = new Set();
+  const byGroup = { HIGH:[], MEDIUM:[], LOW:[], INFO:[] };
+  let total = 0;
+
+  entities.forEach(({ data }) => {
+    total += data.total;
+    Object.keys(sev).forEach(k => sev[k] += (data.sev[k]||0));
+    Object.entries(data.factors).forEach(([k,v]) => factors[k] = (factors[k]||0)+v);
+    data.topTitles.forEach(([t,c]) => titleMap[t] = (titleMap[t]||0)+c);
+    data.cves.forEach(c => cveSet.add(c));
+    Object.keys(byGroup).forEach(k => byGroup[k].push(...data.byGroup[k]));
+  });
+
+  const topTitles = Object.entries(titleMap).sort((a,b)=>b[1]-a[1]);
+  return { total, sev, factors, topTitles, cves:[...cveSet], byGroup };
+}
+
+// ═══════════════════════════════════════════════
+//  REPORT BUILDING
+// ═══════════════════════════════════════════════
+function buildReport() {
+  // Analyze each
+  const analyzedList = parsedEntities.map(e => ({
+    name: e.name,
+    data: analyzeEntity(e.rows),
+  }));
+
+  // Build entity buttons in toolbar
+  const btnWrap = document.getElementById('entity-btns');
+  btnWrap.innerHTML = analyzedList.map((e, i) =>
+    `<button class="tb-entity-btn ${i===0?'active':''}" onclick="switchEntity(${i})" id="eb-${i}">${e.name}</button>`
+  ).join('');
+  if (analyzedList.length > 1) {
+    btnWrap.innerHTML += `<button class="tb-entity-btn" onclick="switchEntity('combined')" id="eb-combined">Combined</button>`;
+  }
+
+  // Store for switching
+  window._analyzed = analyzedList;
+
+  renderPages(0);
+  document.getElementById('report-screen').classList.add('show');
+}
+
+function switchEntity(idx) {
+  activeEntity = idx;
+  document.querySelectorAll('.tb-entity-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`eb-${idx}`).classList.add('active');
+  if (idx === 'combined') {
+    renderPages('combined');
+  } else {
+    renderPages(idx);
+  }
+}
+
+function renderPages(idx) {
+  const analyzed = window._analyzed;
+  let data, entityName;
+
+  if (idx === 'combined') {
+    data = getCombined(analyzed);
+    entityName = 'HNB Group (Combined)';
+  } else {
+    data = analyzed[idx].data;
+    entityName = analyzed[idx].name;
+  }
+
+  const totalPages = 7;
+  const pages = document.getElementById('pages');
+  pages.innerHTML =
+    renderCover(data, entityName) +
+    renderTOC(entityName) +
+    renderExec(data, entityName, 2, totalPages) +
+    renderDomains(data, entityName, 3, totalPages) +
+    renderHighMed(data, entityName, 4, totalPages) +
+    renderCVEs(data, entityName, 5, totalPages) +
+    renderLowInfo(data, entityName, 6, totalPages) +
+    renderRemediation(data, entityName, 7, totalPages);
+}
+
+// ═══════════════════════════════════════════════
+//  HELPER FUNCTIONS
+// ═══════════════════════════════════════════════
+function tr(str, n) {
+  if (!str) return '—';
+  return str.length > n ? str.slice(0, n) + '…' : str;
+}
+
+function sevBadge(s) {
+  const k = s[0] || 'I';
+  return `<span class="sev sev-${k}">${s}</span>`;
+}
+
+function sevColor(s) {
+  return { HIGH:'#EF4444', MEDIUM:'#F59E0B', LOW:'#10B981', INFO:'#8B5CF6' }[s] || '#64748B';
+}
+
+function factorColor(f) {
+  const m = {
+    'Patching Cadence':'#F59E0B',
+    'Network Security':'#06B6D4',
+    'Application Security':'#EF4444',
+    'Leaked Information':'#A855F7',
+    'Dns Health':'#10B981',
+    'DNS Health':'#10B981',
+  };
+  return m[f] || '#94A3B8';
+}
+
+function impactColor(v) {
+  const n = parseFloat(v);
+  if (n >= 8) return '#EF4444';
+  if (n >= 5) return '#F59E0B';
+  if (n >= 2) return '#10B981';
+  return '#8B5CF6';
+}
+
+function makeDonut(sev, size=160) {
+  const order  = ['HIGH','MEDIUM','LOW','INFO'];
+  const colors = { HIGH:'#EF4444', MEDIUM:'#F59E0B', LOW:'#10B981', INFO:'#8B5CF6' };
+  const total  = Object.values(sev).reduce((a,b)=>a+b,0);
+  if (!total) return `<svg width="${size}" height="${size}"></svg>`;
+
+  const cx = size/2, cy = size/2, R = size/2-12, ri = R*0.54;
+  let angle = -90, paths = '';
+
+  order.forEach(s => {
+    const val = sev[s] || 0;
+    if (!val) return;
+    const sweep = (val/total)*360;
+    const end   = angle + sweep;
+    const a1 = angle*Math.PI/180, a2 = end*Math.PI/180;
+    const lg = sweep > 180 ? 1 : 0;
+    paths += `<path d="
+      M ${cx+R*Math.cos(a1)} ${cy+R*Math.sin(a1)}
+      A ${R} ${R} 0 ${lg} 1 ${cx+R*Math.cos(a2)} ${cy+R*Math.sin(a2)}
+      L ${cx+ri*Math.cos(a2)} ${cy+ri*Math.sin(a2)}
+      A ${ri} ${ri} 0 ${lg} 0 ${cx+ri*Math.cos(a1)} ${cy+ri*Math.sin(a1)}
+      Z" fill="${colors[s]}" opacity=".82"/>`;
+    angle = end;
+  });
+
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${R+1}" fill="none" stroke="#1C2A3F" stroke-width="1.5"/>
+    ${paths}
+    <circle cx="${cx}" cy="${cy}" r="${ri}" fill="#0B1120"/>
+    <text x="${cx}" y="${cy-3}" text-anchor="middle" font-family="Syne,sans-serif" font-weight="800" font-size="${size>140?20:16}" fill="#E8EFF8">${total}</text>
+    <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748B" letter-spacing="1">ISSUES</text>
+  </svg>`;
+}
+
+function donutLegend(sev) {
+  const order  = ['HIGH','MEDIUM','LOW','INFO'];
+  const colors = { HIGH:'#EF4444', MEDIUM:'#F59E0B', LOW:'#10B981', INFO:'#8B5CF6' };
+  const total  = Object.values(sev).reduce((a,b)=>a+b,0);
+  return order.map(s => {
+    const v = sev[s]||0, pct = total ? (v/total*100).toFixed(1) : 0;
+    return `<div class="dl-item">
+      <div class="dl-dot" style="background:${colors[s]}"></div>
+      <span>${s}</span>
+      <span class="dl-count" style="color:${colors[s]}">${v}<span class="dl-pct">${pct}%</span></span>
+    </div>`;
+  }).join('');
+}
+
+function pgFoot(entityName, n, total) {
+  return `<div class="pg-foot">
+    <div class="pg-foot-txt">${entityName} — Cyber Security Vulnerability Assessment · Confidential</div>
+    <div class="pg-num">${n} / ${total}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  PAGE RENDERERS
+// ═══════════════════════════════════════════════
+function renderCover(data, entityName) {
+  const {sev, total} = data;
+  const date = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  return `
+<div class="pg pg-cover" id="rp-cover">
+  <div class="pg-accent"></div>
+  <div class="cv-grid-bg"></div>
+
+  <div class="cv-top">
+    <div class="cv-logo">
+      <div class="cv-logo-mark">🛡</div>
+      <div>
+        <div class="cv-logo-name">HNB GROUP</div>
+        <div class="cv-logo-tag">Cyber Security Intelligence</div>
+      </div>
+    </div>
+    <div class="cv-meta">
+      <div>DATE: ${date}</div>
+      <div>CLASSIFICATION: CONFIDENTIAL</div>
+      <div>VERSION: 1.0</div>
+      <div>SOURCE: SECURITYSCORECARD</div>
+    </div>
+  </div>
+
+  <div class="cv-main">
+    <div class="cv-eyebrow">Vulnerability Assessment Report</div>
+    <div class="cv-title">
+      Cyber Risk<br>
+      <em>Intelligence</em><br>
+      Report
+    </div>
+    <div class="cv-desc">Comprehensive vulnerability findings, risk domain analysis, CVE intelligence, and strategic remediation roadmap</div>
+    <div class="cv-entity-tag">🏢 &nbsp;${entityName}</div>
+    <div class="cv-kpis">
+      <div class="cv-kpi"><div class="cv-kpi-n" style="color:#EF4444">${sev.HIGH||0}</div><div class="cv-kpi-l">High</div></div>
+      <div class="cv-kpi"><div class="cv-kpi-n" style="color:#F59E0B">${sev.MEDIUM||0}</div><div class="cv-kpi-l">Medium</div></div>
+      <div class="cv-kpi"><div class="cv-kpi-n" style="color:#10B981">${sev.LOW||0}</div><div class="cv-kpi-l">Low</div></div>
+      <div class="cv-kpi"><div class="cv-kpi-n" style="color:#8B5CF6">${sev.INFO||0}</div><div class="cv-kpi-l">Info</div></div>
+    </div>
+    <div class="cv-classified">
+      <span class="cv-badge">🔴 Confidential</span>
+      <span class="cv-classified-note">For authorized personnel only · Do not distribute</span>
+    </div>
+  </div>
+
+  <div class="cv-footer">
+    <div class="cv-footer-l">
+      <div>HNB Group — Cyber Security Vulnerability Assessment Report</div>
+      <div>Assessment Period: 2025–2026 &nbsp;·&nbsp; Total Issues: ${total}</div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog)">Page 1</div>
+  </div>
+</div>`;
+}
+
+function renderTOC(entityName) {
+  const date = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const sections = [
+    ['01','Cover Page','Report overview, classification and summary KPIs','1'],
+    ['02','Executive Summary','Security posture, severity distribution & key risk observations','2'],
+    ['03','Security Domain Analysis','Factor breakdown, domain severity and top issue patterns','3'],
+    ['04','High & Medium Findings','Critical & urgent findings requiring prioritized action','4'],
+    ['05','CVE Vulnerability Analysis','CVE intelligence registry and exposure mapping','5'],
+    ['06','Low & Informational Findings','Background risk catalogue and informational advisories','6'],
+    ['07','Remediation Roadmap','Prioritized P1/P2/P3 action plan with timelines','7'],
+  ];
+  return `
+<div class="pg" id="rp-toc" style="min-height:1123px;background:var(--ink)">
+  <div class="pg-accent"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(6,182,212,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(6,182,212,.02) 1px,transparent 1px);background-size:44px 44px;"></div>
+  <div class="pg-body" style="padding-top:48px;position:relative;z-index:2">
+    <div class="toc-head">
+      <div>
+        <div class="toc-title"><small>Contents</small>Table of<br>Contents</div>
+      </div>
+      <div class="toc-meta"><div>${entityName}</div><div>${date}</div></div>
+    </div>
+    ${sections.map(([n,t,d,p])=>`
+    <div class="toc-row">
+      <div class="toc-num">${n}</div>
+      <div class="toc-info">
+        <div class="toc-section-name">${t}</div>
+        <div class="toc-section-desc">${d}</div>
+      </div>
+      <div class="toc-dots"></div>
+      <div class="toc-pg">${p}</div>
+    </div>`).join('')}
+  </div>
+</div>`;
+}
+
+function renderExec(data, entityName, n, total) {
+  const {sev, factors, total: tot} = data;
+  const factorList = Object.entries(factors).sort((a,b)=>b[1]-a[1]);
+  return `
+<div class="pg" id="rp-exec" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">Executive Summary</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="sec-head"><div class="sec-head-icon">📊</div><div class="sec-head-text"><div class="sec-head-title">Security Posture Overview</div><div class="sec-head-sub">Aggregate vulnerability distribution across all scanned assets</div></div></div>
+    <div class="sec-div"></div>
+
+    <div class="kpi-row">
+      ${['HIGH','MEDIUM','LOW','INFO'].map(s=>`
+      <div class="kpi-card kpi-${s[0]}">
+        <div class="kpi-n">${sev[s]||0}</div>
+        <div class="kpi-l">${s}</div>
+        <div class="kpi-p">${tot?(((sev[s]||0)/tot)*100).toFixed(1):0}% of total</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="exec-split">
+      <div class="donut-wrap">
+        ${makeDonut(sev, 160)}
+        <div class="donut-legend">${donutLegend(sev)}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--snow);margin-bottom:12px">Risk Domain Distribution</div>
+        ${factorList.map(([f,c])=>{
+          const pct = tot ? (c/tot*100) : 0;
+          const col = factorColor(f);
+          return `<div class="prog-row">
+            <div class="prog-hdr">
+              <span class="prog-name">${f}</span>
+              <span class="prog-val" style="color:${col}">${c}</span>
+            </div>
+            <div class="prog-bg">
+              <div class="prog-fill" style="width:${pct.toFixed(1)}%;background:${col}"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:16px"><div class="sec-head-icon">⚡</div><div class="sec-head-text"><div class="sec-head-title">Key Risk Observations</div><div class="sec-head-sub">Critical patterns identified across vulnerability data</div></div></div>
+    <div class="sec-div"></div>
+    <div class="risk-grid">
+      <div class="risk-card"><div class="risk-card-title">⚠️ Patching Deficit</div><div class="risk-card-body">Unpatched CVEs represent the largest exposure surface. Multiple high and critical CVSS v3.0 vulnerabilities remain open across production infrastructure, indicating a systemic patching lag.</div></div>
+      <div class="risk-card"><div class="risk-card-title">🔒 Weak Cryptography</div><div class="risk-card-body">SSL/TLS services supporting deprecated protocols (TLS 1.0/1.1) and weak cipher suites expose encrypted communications to interception and protocol downgrade attacks.</div></div>
+      <div class="risk-card"><div class="risk-card-title">🚨 Credential Exposure</div><div class="risk-card-body">Credentials at risk detected via breach intelligence feeds across multiple portals. Immediate password reset and MFA enforcement required to prevent unauthorized access.</div></div>
+      <div class="risk-card"><div class="risk-card-title">🌐 Application Security Gaps</div><div class="risk-card-body">Missing security headers (CSP, HSTS), insecure session cookie attributes, and absent subresource integrity create significant web application attack vectors.</div></div>
+    </div>
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+function renderDomains(data, entityName, n, total) {
+  const {factors, topTitles, byGroup, total: tot} = data;
+
+  // Build domain severity breakdown
+  const domSev = {};
+  ['HIGH','MEDIUM','LOW','INFO'].forEach(s => {
+    byGroup[s].forEach(item => {
+      if (!domSev[item.factor]) domSev[item.factor] = {HIGH:0,MEDIUM:0,LOW:0,INFO:0};
+      domSev[item.factor][s]++;
+    });
+  });
+
+  const factorList = Object.entries(factors).sort((a,b)=>b[1]-a[1]);
+
+  return `
+<div class="pg" id="rp-domain" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">Security Domain Analysis</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="sec-head"><div class="sec-head-icon">🔍</div><div class="sec-head-text"><div class="sec-head-title">Security Factor Distribution</div><div class="sec-head-sub">Vulnerabilities grouped by security control domain</div></div></div>
+    <div class="sec-div"></div>
+
+    ${factorList.map(([f, c]) => {
+      const sv = domSev[f] || {};
+      const pct = tot ? (c/tot*100).toFixed(1) : 0;
+      const col = factorColor(f);
+      const segs = ['HIGH','MEDIUM','LOW','INFO'].map(s => {
+        const w = c > 0 ? ((sv[s]||0)/c*100) : 0;
+        return `<div style="flex:${w};background:${sevColor(s)};min-width:${w>0?2:0}px"></div>`;
+      }).join('');
+      const pills = ['HIGH','MEDIUM','LOW','INFO'].filter(s=>(sv[s]||0)>0).map(s =>
+        `<span class="domain-pill"><span style="color:${sevColor(s)}">${sv[s]}</span> <span style="color:var(--fog)">${s}</span></span>`
+      ).join('');
+      return `
+      <div class="domain-card">
+        <div class="domain-hdr">
+          <div>
+            <div class="domain-name">${f}</div>
+            <div class="domain-share">${pct}% of total findings</div>
+          </div>
+          <div class="domain-count" style="color:${col}">${c}</div>
+        </div>
+        <div class="domain-bar">${segs}</div>
+        <div class="domain-pills">${pills}</div>
+      </div>`;
+    }).join('')}
+
+    <div class="sec-head" style="margin-top:18px"><div class="sec-head-icon">📋</div><div class="sec-head-text"><div class="sec-head-title">Most Frequent Issue Types</div><div class="sec-head-sub">Top vulnerability patterns by occurrence count</div></div></div>
+    <div class="sec-div"></div>
+    <table class="tbl">
+      <thead><tr><th>Issue Type</th><th style="text-align:center">Count</th><th>Share of Total</th></tr></thead>
+      <tbody>
+        ${topTitles.slice(0,8).map(([t,c])=>{
+          const pct = tot?(c/tot*100).toFixed(1):0;
+          return `<tr>
+            <td style="color:var(--snow);font-weight:600">${tr(t,70)}</td>
+            <td style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);font-weight:700">${c}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="prog-bg" style="max-width:130px;flex:1"><div class="prog-fill" style="width:${pct}%;background:var(--cyan)"></div></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fog)">${pct}%</span>
+              </div>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+function renderHighMed(data, entityName, n, total) {
+  const {byGroup} = data;
+  const highs = byGroup.HIGH || [];
+  const meds  = byGroup.MEDIUM || [];
+
+  return `
+<div class="pg" id="rp-highmed" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">High &amp; Medium Severity Findings</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="sec-head"><div class="sec-head-icon">🚨</div><div class="sec-head-text"><div class="sec-head-title">High Severity Findings</div><div class="sec-head-sub">Requires immediate remediation · ${highs.length} finding${highs.length!==1?'s':''}</div></div></div>
+    <div class="sec-div"></div>
+
+    ${highs.length > 0 ? `
+    <table class="tbl" style="margin-bottom:20px">
+      <thead><tr>
+        <th style="width:33%">Issue</th>
+        <th style="width:13%">Severity</th>
+        <th style="width:19%">Domain</th>
+        <th style="width:21%">Host / IP</th>
+        <th style="width:8%;text-align:right">Impact</th>
+        <th style="width:6%">Last Seen</th>
+      </tr></thead>
+      <tbody>
+        ${highs.slice(0,18).map(i=>`<tr>
+          <td>
+            <div class="td-title">${tr(i.title,52)}</div>
+            ${i.cve?`<span class="cve-pill">${i.cve}</span>`:''}
+          </td>
+          <td>${sevBadge('HIGH')}</td>
+          <td style="font-size:9.5px;color:var(--fog)">${i.factor}</td>
+          <td><span class="td-host">${tr(i.hostname||i.ip||'—',40)}</span></td>
+          <td style="text-align:right"><span class="impact" style="color:${impactColor(i.score_impact)}">${i.score_impact||'—'}</span></td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog)">${i.last_seen||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>` : '<p style="color:var(--fog);font-size:11px;padding:10px 0">No high severity findings detected.</p>'}
+
+    ${meds.length > 0 ? `
+    <div class="sec-head"><div class="sec-head-icon">⚠️</div><div class="sec-head-text"><div class="sec-head-title">Medium Severity Findings</div><div class="sec-head-sub">Remediate within 30 days · ${meds.length} finding${meds.length!==1?'s':''}</div></div></div>
+    <div class="sec-div"></div>
+    <table class="tbl">
+      <thead><tr>
+        <th style="width:36%">Issue</th>
+        <th style="width:13%">Severity</th>
+        <th style="width:22%">Domain</th>
+        <th style="width:21%">Host / IP</th>
+        <th style="width:8%;text-align:right">Impact</th>
+      </tr></thead>
+      <tbody>
+        ${meds.slice(0,10).map(i=>`<tr>
+          <td>
+            <div class="td-title">${tr(i.title,55)}</div>
+            ${i.cve?`<span class="cve-pill">${i.cve}</span>`:''}
+          </td>
+          <td>${sevBadge('MEDIUM')}</td>
+          <td style="font-size:9.5px;color:var(--fog)">${i.factor}</td>
+          <td><span class="td-host">${tr(i.hostname||i.ip||'—',38)}</span></td>
+          <td style="text-align:right"><span class="impact" style="color:${impactColor(i.score_impact)}">${i.score_impact||'—'}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>` : ''}
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+function renderCVEs(data, entityName, n, total) {
+  const {cves, byGroup, sev: sv, total: tot} = data;
+
+  // Deduplicate CVE items
+  const allItems = [...(byGroup.HIGH||[]),...(byGroup.MEDIUM||[]),...(byGroup.LOW||[]),...(byGroup.INFO||[])];
+  const cveItems = [];
+  const seen = new Set();
+  allItems.forEach(i => {
+    if (i.cve && !seen.has(i.cve)) { seen.add(i.cve); cveItems.push(i); }
+  });
+
+  const recentCVEs = cves.filter(c => /20(2[0-9]|19)/.test(c)).length;
+  const highCVEs   = cveItems.filter(i => i.severity === 'HIGH').length;
+
+  return `
+<div class="pg" id="rp-cve" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">CVE Vulnerability Analysis</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="sec-head"><div class="sec-head-icon">🔬</div><div class="sec-head-text"><div class="sec-head-title">CVE Intelligence Summary</div><div class="sec-head-sub">${cves.length} unique CVE${cves.length!==1?'s':''} identified across all scanned assets</div></div></div>
+    <div class="sec-div"></div>
+
+    <div class="cve-stats">
+      <div class="cve-stat" style="border-color:var(--red-br)">
+        <div class="cve-stat-n" style="color:var(--red)">${recentCVEs}</div>
+        <div class="cve-stat-l">Recent CVEs (2019–2025)</div>
+      </div>
+      <div class="cve-stat" style="border-color:var(--wire2)">
+        <div class="cve-stat-n" style="color:var(--cyan)">${cves.length}</div>
+        <div class="cve-stat-l">Total Unique CVEs</div>
+      </div>
+      <div class="cve-stat" style="border-color:var(--amb-br)">
+        <div class="cve-stat-n" style="color:var(--amber)">${highCVEs}</div>
+        <div class="cve-stat-l">CVEs in High Findings</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:var(--snow);margin-bottom:12px">CVE Registry — Detected Vulnerabilities</div>
+
+    ${cveItems.length > 0 ? `
+    <table class="tbl">
+      <thead><tr>
+        <th style="width:18%">CVE ID</th>
+        <th style="width:33%">Associated Finding</th>
+        <th style="width:14%">Severity</th>
+        <th style="width:23%">Host / Target</th>
+        <th style="width:12%;text-align:right">Score Impact</th>
+      </tr></thead>
+      <tbody>
+        ${cveItems.slice(0,32).map(i=>`<tr>
+          <td><span class="cve-pill" style="font-size:9px">${i.cve}</span></td>
+          <td class="td-title">${tr(i.title,50)}</td>
+          <td>${sevBadge(i.severity)}</td>
+          <td><span class="td-host">${tr(i.hostname||i.ip||'—',38)}</span></td>
+          <td style="text-align:right"><span class="impact" style="color:${impactColor(i.score_impact)}">${i.score_impact||'—'}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${cveItems.length > 32 ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog);margin-top:10px;text-align:center">Showing ${32} of ${cveItems.length} CVE-linked findings · Contact security team for complete registry</div>` : ''}
+    ` : '<p style="color:var(--fog);font-size:11px;padding:10px 0">No CVE-linked findings detected in this dataset.</p>'}
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+function renderLowInfo(data, entityName, n, total) {
+  const lows  = data.byGroup.LOW  || [];
+  const infos = data.byGroup.INFO || [];
+
+  return `
+<div class="pg" id="rp-lowinfo" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">Low &amp; Informational Findings</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="tab-bar">
+      <button class="tab-btn on" onclick="switchTab(this,'tlow')">🟢 LOW SEVERITY (${lows.length})</button>
+      <button class="tab-btn" onclick="switchTab(this,'tinfo')">🔵 INFORMATIONAL (${infos.length})</button>
+    </div>
+
+    <div id="tlow" class="tab-pane on">
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:var(--snow)">Low Severity Findings</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog)">· Remediate within 90 days</span>
+      </div>
+      ${lows.length > 0 ? `
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:38%">Issue Type</th>
+          <th style="width:18%">Domain</th>
+          <th style="width:26%">Host / Target</th>
+          <th style="width:10%;text-align:center">CVE</th>
+          <th style="width:8%;text-align:right">Impact</th>
+        </tr></thead>
+        <tbody>
+          ${lows.slice(0,30).map(i=>`<tr>
+            <td class="td-title">${tr(i.title,55)}</td>
+            <td style="font-size:9.5px;color:var(--fog)">${i.factor}</td>
+            <td><span class="td-host">${tr(i.hostname||i.ip||'—',38)}</span></td>
+            <td style="text-align:center">${i.cve?`<span class="cve-pill">${i.cve.slice(0,12)}</span>`:'—'}</td>
+            <td style="text-align:right"><span class="impact" style="color:${impactColor(i.score_impact)}">${i.score_impact||'—'}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      ${lows.length>30?`<div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog);margin-top:8px;text-align:center">Showing 30 of ${lows.length} low severity findings</div>`:''}
+      ` : '<p style="color:var(--fog);font-size:11px">No low severity findings.</p>'}
+    </div>
+
+    <div id="tinfo" class="tab-pane">
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:var(--snow)">Informational Findings</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog)">· Review and document</span>
+      </div>
+      ${infos.length > 0 ? `
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:42%">Issue Type</th>
+          <th style="width:20%">Domain</th>
+          <th style="width:30%">Host / Target</th>
+          <th style="width:8%;text-align:right">Last Seen</th>
+        </tr></thead>
+        <tbody>
+          ${infos.slice(0,30).map(i=>`<tr>
+            <td class="td-title">${tr(i.title,60)}</td>
+            <td style="font-size:9.5px;color:var(--fog)">${i.factor}</td>
+            <td><span class="td-host">${tr(i.hostname||i.ip||'—',42)}</span></td>
+            <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--fog)">${i.last_seen||'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      ${infos.length>30?`<div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--fog);margin-top:8px;text-align:center">Showing 30 of ${infos.length} informational findings</div>`:''}
+      ` : '<p style="color:var(--fog);font-size:11px">No informational findings.</p>'}
+    </div>
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+function renderRemediation(data, entityName, n, total) {
+  const {sev, byGroup} = data;
+  const highCount = (sev.HIGH||0);
+  const medCount  = (sev.MEDIUM||0);
+
+  // Auto-derive remediation insights from data
+  const titles = [...(byGroup.HIGH||[]),...(byGroup.MEDIUM||[])].map(i=>i.title);
+  const hasSSL    = titles.some(t=>/ssl|tls|cipher|protocol/i.test(t));
+  const hasCookie = titles.some(t=>/cookie|session/i.test(t));
+  const hasPatch  = titles.some(t=>/patch|cve|vuln/i.test(t));
+  const hasCreds  = titles.some(t=>/credential|breach|password|risk/i.test(t));
+  const hasHeaders= [...(byGroup.LOW||[])].some(i=>/csp|hsts|header/i.test(i.title));
+  const hasCert   = [...(byGroup.LOW||[]),...(byGroup.INFO||[])].some(i=>/cert|expire|self.sign/i.test(i.title));
+
+  return `
+<div class="pg" id="rp-remediation" style="min-height:1123px">
+  <div class="pg-accent"></div>
+  <div class="pg-head">
+    <div class="pg-section">Remediation Roadmap</div>
+    <div class="pg-entity">${entityName}</div>
+  </div>
+  <div class="pg-body">
+    <div class="sec-head"><div class="sec-head-icon">🗺️</div><div class="sec-head-text"><div class="sec-head-title">Strategic Remediation Plan</div><div class="sec-head-sub">Prioritized action items based on risk severity and score impact</div></div></div>
+    <div class="sec-div"></div>
+
+    <div class="priority-row">
+      <div class="priority-chip p1"><div class="priority-chip-label">P1 — IMMEDIATE</div><div class="priority-chip-sub">0 – 14 Days</div></div>
+      <div class="priority-chip p2"><div class="priority-chip-label">P2 — URGENT</div><div class="priority-chip-sub">15 – 30 Days</div></div>
+      <div class="priority-chip p3"><div class="priority-chip-label">P3 — PLANNED</div><div class="priority-chip-sub">31 – 90 Days</div></div>
+    </div>
+
+    ${hasPatch ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p1">P1</div>
+      <div class="rec-body">
+        <div class="rec-title">Critical & High CVE Patch Acceleration</div>
+        <div class="rec-desc">Initiate an emergency patching cycle for all high and critical CVSS v3.0 vulnerabilities. Establish a 72-hour SLA for critical CVE remediation with change management fast-track. Prioritize internet-facing systems and services first. Track patch compliance using vulnerability management tooling.</div>
+        <div class="rec-timeline">Target: 14 days · Owner: Operations / DevOps · Risk Reduction: Critical</div>
+      </div>
+    </div>` : ''}
+
+    ${hasSSL ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p1">P1</div>
+      <div class="rec-body">
+        <div class="rec-title">SSL/TLS Protocol & Cipher Suite Hardening</div>
+        <div class="rec-desc">Disable SSLv2, SSLv3, TLS 1.0, and TLS 1.1 across all web services, load balancers, and infrastructure. Enforce TLS 1.2 minimum with TLS 1.3 preferred. Remove weak cipher suites (RC4, DES, 3DES, NULL) and configure Perfect Forward Secrecy (PFS) across all endpoints.</div>
+        <div class="rec-timeline">Target: 14 days · Owner: Infrastructure Team · Risk Reduction: High</div>
+      </div>
+    </div>` : ''}
+
+    ${hasCookie ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p1">P1</div>
+      <div class="rec-body">
+        <div class="rec-title">Session Cookie Security Attribute Enforcement</div>
+        <div class="rec-desc">Implement HttpOnly and Secure flags on all session cookies across customer-facing portals and internal applications. Set SameSite=Strict or SameSite=Lax to prevent CSRF attacks. Audit and update cookie configuration across all web application deployments immediately.</div>
+        <div class="rec-timeline">Target: 7 days · Owner: Application Security Team · Risk Reduction: High</div>
+      </div>
+    </div>` : ''}
+
+    ${hasCreds ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p2">P2</div>
+      <div class="rec-body">
+        <div class="rec-title">Credential Breach Response & MFA Rollout</div>
+        <div class="rec-desc">Force immediate password reset for all accounts identified in breach intelligence feeds. Implement multi-factor authentication across Salesforce, payment portals, LMS, and all customer/employee-facing systems. Deploy enterprise password management and integrate ongoing credential monitoring feeds.</div>
+        <div class="rec-timeline">Target: 21 days · Owner: IAM Team · Risk Reduction: High</div>
+      </div>
+    </div>` : ''}
+
+    ${hasHeaders ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p2">P2</div>
+      <div class="rec-body">
+        <div class="rec-title">Web Security Headers Implementation</div>
+        <div class="rec-desc">Deploy Content Security Policy (CSP) headers across all web properties with strict source directives. Implement HTTP Strict Transport Security (HSTS) with min-age 31536000 and includeSubDomains. Add X-Frame-Options, X-Content-Type-Options, and configure Subresource Integrity (SRI) for all third-party scripts.</div>
+        <div class="rec-timeline">Target: 30 days · Owner: Web Development Team · Risk Reduction: Medium</div>
+      </div>
+    </div>` : ''}
+
+    ${hasCert ? `
+    <div class="rec-card">
+      <div class="rec-p-badge p3">P3</div>
+      <div class="rec-body">
+        <div class="rec-title">Certificate Lifecycle Management Program</div>
+        <div class="rec-desc">Audit all TLS certificates for expiry, self-signing, and missing revocation controls. Implement automated certificate management (ACME/Let's Encrypt or enterprise CA). Establish 30-day pre-expiry alerting and replace all self-signed certificates in production with CA-issued certificates.</div>
+        <div class="rec-timeline">Target: 90 days · Owner: PKI / Infrastructure Team · Risk Reduction: Medium</div>
+      </div>
+    </div>` : ''}
+
+    <div class="rec-card">
+      <div class="rec-p-badge p3">P3</div>
+      <div class="rec-body">
+        <div class="rec-title">Vulnerability Management Programme Maturity</div>
+        <div class="rec-desc">Establish a continuous vulnerability management lifecycle: weekly scanning, monthly SLA reviews, quarterly risk assessments, and annual penetration testing. Integrate SecurityScorecard monitoring into the SOC dashboard. Define KPIs for mean time to remediate (MTTR) by severity and track against baseline.</div>
+        <div class="rec-timeline">Target: 90 days · Owner: CISO / Security Operations · Risk Reduction: Strategic</div>
+      </div>
+    </div>
+
+  </div>
+  ${pgFoot(entityName, n, total)}
+</div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  UI INTERACTIONS
+// ═══════════════════════════════════════════════
+function switchTab(btn, paneId) {
+  const pg = btn.closest('.pg-body') || btn.closest('.pg');
+  pg.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  pg.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(paneId).classList.add('on');
+}
+
+function goBack() {
+  document.getElementById('report-screen').classList.remove('show');
+  document.getElementById('upload-screen').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════
+//  PDF EXPORT
+// ═══════════════════════════════════════════════
+async function exportPDF() {
+  const overlay = document.getElementById('pdf-overlay');
+  const bar     = document.getElementById('pdf-bar');
+  const status  = document.getElementById('pdf-status');
+  overlay.classList.add('show');
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf   = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const pages = document.querySelectorAll('.pg');
+
+    for (let i = 0; i < pages.length; i++) {
+      bar.style.width = Math.round((i / pages.length) * 92) + '%';
+      status.textContent = `Rendering page ${i+1} of ${pages.length}…`;
+
+      const canvas = await html2canvas(pages[i], {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#0B1120',
+        width: 794,
+        windowWidth: 794,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.93);
+      const imgH    = (canvas.height * 210) / canvas.width;
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, 0, 210, Math.min(imgH, 297));
+    }
+
+    bar.style.width = '100%';
+    status.textContent = 'Saving…';
+    await sleep(300);
+
+    const name = window._analyzed?.[activeEntity === 'combined' ? 0 : activeEntity]?.name || 'Report';
+    const date = new Date().toISOString().slice(0,10);
+    pdf.save(`HNB-CyberReport-${name.replace(/\s+/g,'-')}-${date}.pdf`);
+
+    setTimeout(() => overlay.classList.remove('show'), 600);
+  } catch(e) {
+    overlay.classList.remove('show');
+    alert('PDF generation failed: ' + e.message);
+  }
+}
+</script>
+</body>
+</html>
