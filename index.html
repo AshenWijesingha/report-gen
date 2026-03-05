@@ -2183,7 +2183,8 @@ let state = {
   entities: [],
   analyzedData: [],
   activeEntityIndex: 0,
-  allIssues: []
+  allIssues: [],
+  issueRegistry: {} // Map of issue IDs to issue objects for safe click handling
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -2486,6 +2487,10 @@ function renderPages(index) {
     entityName = state.analyzedData[index].name;
   }
   
+  // Clear and rebuild issue registry for safe click handling
+  state.issueRegistry = {};
+  registerIssues(data.byGroup);
+  
   const totalPages = 7;
   
   elements.reportPages.innerHTML = 
@@ -2497,6 +2502,22 @@ function renderPages(index) {
     renderCVEAnalysis(data, entityName, 5, totalPages) +
     renderLowInfoFindings(data, entityName, 6, totalPages) +
     renderRemediationRoadmap(data, entityName, 7, totalPages);
+}
+
+// Register issues in the registry for safe click handling (prevents XSS)
+function registerIssues(byGroup) {
+  ['HIGH', 'MEDIUM', 'LOW', 'INFO'].forEach(severity => {
+    (byGroup[severity] || []).forEach(issue => {
+      if (issue.id) {
+        state.issueRegistry[issue.id] = issue;
+      }
+    });
+  });
+}
+
+// Safe issue lookup by ID
+function getIssueById(issueId) {
+  return state.issueRegistry[issueId] || null;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3004,7 +3025,7 @@ function renderHighMediumFindings(data, entityName, pageNum, totalPages) {
                     <span class="impact-value" style="color: ${getImpactColor(issue.scoreImpact)}">${issue.scoreImpact || '—'}</span>
                   </td>
                   <td>
-                    <button class="browse-button" style="padding: 4px 8px; font-size: 9px;" onclick="showIssueDetails(${JSON.stringify(issue).replace(/"/g, '&quot;')})">View</button>
+                    <button class="browse-button" style="padding: 4px 8px; font-size: 9px;" onclick="showIssueById('${escapeHtml(issue.id)}')">View</button>
                   </td>
                 </tr>
               `).join('')}
@@ -3050,7 +3071,7 @@ function renderHighMediumFindings(data, entityName, pageNum, totalPages) {
                     <span class="impact-value" style="color: ${getImpactColor(issue.scoreImpact)}">${issue.scoreImpact || '—'}</span>
                   </td>
                   <td>
-                    <button class="browse-button" style="padding: 4px 8px; font-size: 9px;" onclick="showIssueDetails(${JSON.stringify(issue).replace(/"/g, '&quot;')})">View</button>
+                    <button class="browse-button" style="padding: 4px 8px; font-size: 9px;" onclick="showIssueById('${escapeHtml(issue.id)}')">View</button>
                   </td>
                 </tr>
               `).join('')}
@@ -3187,7 +3208,7 @@ function renderLowInfoFindings(data, entityName, pageNum, totalPages) {
               </thead>
               <tbody>
                 ${lows.slice(0, 26).map(item => `
-                  <tr onclick="showIssueDetails(${JSON.stringify(item).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+                  <tr onclick="showIssueById('${escapeHtml(item.id)}')" style="cursor: pointer;">
                     <td>
                       <div class="td-title">${escapeHtml(truncate(item.title, 50))}</div>
                       ${item.hostname || item.initialUrl ? makeClickableLink(item.hostname || item.initialUrl, 35) : ''}
@@ -3221,7 +3242,7 @@ function renderLowInfoFindings(data, entityName, pageNum, totalPages) {
               </thead>
               <tbody>
                 ${infos.slice(0, 26).map(item => `
-                  <tr onclick="showIssueDetails(${JSON.stringify(item).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+                  <tr onclick="showIssueById('${escapeHtml(item.id)}')" style="cursor: pointer;">
                     <td>
                       <div class="td-title">${escapeHtml(truncate(item.title, 55))}</div>
                       ${item.hostname || item.initialUrl ? makeClickableLink(item.hostname || item.initialUrl, 40) : ''}
@@ -4026,11 +4047,20 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Safe wrapper to show issue details by ID (prevents XSS)
+function showIssueById(issueId) {
+  const issue = getIssueById(issueId);
+  if (issue) {
+    showIssueDetails(issue);
+  }
+}
+
 // Make functions globally available
 window.removeFile = removeFile;
 window.switchEntity = switchEntity;
 window.switchTab = switchTab;
 window.showIssueDetails = showIssueDetails;
+window.showIssueById = showIssueById;
 </script>
 </body>
 </html>
