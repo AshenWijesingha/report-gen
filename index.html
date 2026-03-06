@@ -14,12 +14,16 @@
    DESIGN TOKENS
 ═══════════════════════════════════════════════════════════════ */
 :root {
-  /* Dark Theme */
+  /* Dark Theme (default) */
   --bg-primary:    #0a0e17;
   --bg-secondary:  #0f1520;
   --bg-tertiary:   #151c2c;
   --bg-card:       #1a2235;
   --bg-hover:      #1f2940;
+  
+  /* Toolbar */
+  --toolbar-bg:    rgba(10, 14, 23, 0.97);
+  --toolbar-border: #1e2a40;
   
   /* Borders */
   --border-subtle: #1e2a40;
@@ -31,6 +35,12 @@
   --text-secondary: #cbd5e1;
   --text-muted:     #64748b;
   --text-dim:       #475569;
+  
+  /* Chart internals */
+  --donut-inner:    #0f1520;
+  --donut-ring:     #1e2a40;
+  --donut-text:     #f8fafc;
+  --donut-label:    #64748b;
   
   /* Accents */
   --accent:        #0ea5e9;
@@ -84,6 +94,53 @@
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME OVERRIDES
+═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --bg-primary:    #f8fafc;
+  --bg-secondary:  #ffffff;
+  --bg-tertiary:   #f1f5f9;
+  --bg-card:       #ffffff;
+  --bg-hover:      #e2e8f0;
+  
+  --toolbar-bg:    rgba(255, 255, 255, 0.97);
+  --toolbar-border: #e2e8f0;
+  
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+  
+  --text-primary:   #0f172a;
+  --text-secondary: #1e293b;
+  --text-muted:     #64748b;
+  --text-dim:       #94a3b8;
+  
+  --donut-inner:    #f1f5f9;
+  --donut-ring:     #e2e8f0;
+  --donut-text:     #0f172a;
+  --donut-label:    #64748b;
+  
+  --accent-bg:     rgba(14, 165, 233, 0.07);
+  --accent-border: rgba(14, 165, 233, 0.3);
+  
+  --critical-bg:   rgba(239, 68, 68, 0.07);
+  --critical-br:   rgba(239, 68, 68, 0.3);
+  --high-bg:       rgba(249, 115, 22, 0.07);
+  --high-br:       rgba(249, 115, 22, 0.3);
+  --medium-bg:     rgba(234, 179, 8, 0.07);
+  --medium-br:     rgba(234, 179, 8, 0.3);
+  --low-bg:        rgba(34, 197, 94, 0.07);
+  --low-br:        rgba(34, 197, 94, 0.3);
+  --info-bg:       rgba(139, 92, 246, 0.07);
+  --info-br:       rgba(139, 92, 246, 0.3);
+  
+  --shadow-sm:   0 1px 2px rgba(0,0,0,0.08);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.12);
+  --shadow-xl:   0 24px 80px rgba(0,0,0,0.15);
 }
 
 /* Reset */
@@ -237,7 +294,7 @@ body {
   width: 100%;
   border: 2px dashed var(--border-medium);
   border-radius: var(--radius-xl);
-  background: rgba(15, 21, 32, 0.6);
+  background: var(--bg-card);
   backdrop-filter: blur(16px);
   padding: var(--space-2xl) var(--space-xl);
   display: flex;
@@ -617,14 +674,37 @@ input[type="file"] {
   left: 0;
   right: 0;
   z-index: 8888;
-  background: rgba(10, 14, 23, 0.97);
-  border-bottom: 1px solid var(--border-subtle);
+  background: var(--toolbar-bg);
+  border-bottom: 1px solid var(--toolbar-border);
   backdrop-filter: blur(20px);
   padding: 0 var(--space-xl);
   height: 60px;
   display: flex;
   align-items: center;
   gap: var(--space-md);
+}
+
+/* Theme toggle button */
+.btn-theme {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.btn-theme:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .toolbar-brand {
@@ -2484,7 +2564,7 @@ input[type="file"] {
   padding: var(--space-lg);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  background: rgba(15, 21, 32, 0.5);
+  background: var(--bg-tertiary);
 }
 
 .report-options-title {
@@ -2502,6 +2582,141 @@ input[type="file"] {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-md);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CREDENTIAL BREACH UPLOAD
+═══════════════════════════════════════════════════════════════ */
+.cred-breach-section {
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-tertiary);
+}
+
+.cred-breach-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.cred-breach-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.cred-breach-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+}
+
+.cred-breach-dropzone {
+  border: 1.5px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--bg-secondary);
+}
+
+.cred-breach-dropzone:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.cred-breach-dropzone-icon { font-size: 26px; }
+
+.cred-breach-dropzone-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cred-breach-dropzone-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.cred-breach-dropzone-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 4px;
+}
+
+.cred-breach-dropzone-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cred-breach-preview {
+  display: none;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.cred-breach-preview.visible { display: flex; }
+
+.cred-breach-preview-icon { font-size: 22px; }
+
+.cred-breach-preview-info { flex: 1; }
+
+.cred-breach-preview-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cred-breach-preview-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.cred-breach-remove {
+  background: var(--critical-bg);
+  border: 1px solid var(--critical-br);
+  color: var(--critical);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.cred-breach-remove:hover { background: rgba(239,68,68,0.15); }
 
 /* ═══════════════════════════════════════════════════════════════
    PRINT STYLES
@@ -2589,6 +2804,7 @@ input[type="file"] {
         <div class="brand-name">Cyber Intel</div>
         <div class="brand-tagline">Professional Vulnerability Report Platform</div>
       </div>
+      <button class="btn-theme" id="btn-theme-upload" style="margin-left: auto;" title="Toggle light/dark theme" onclick="toggleTheme()">🌙</button>
     </div>
     
     <h1 class="hero-headline">
@@ -2656,6 +2872,30 @@ input[type="file"] {
           <label class="input-label" for="assessment-period-input">Assessment Period</label>
           <input class="input-field" id="assessment-period-input" type="text" placeholder="e.g., Jan 2025 – Mar 2025">
         </div>
+      </div>
+    </div>
+    
+    <!-- Credential Breach File Upload -->
+    <div class="cred-breach-section">
+      <div class="cred-breach-header">
+        <span>🔐</span>
+        <span class="cred-breach-title">Credential Breach Intelligence File</span>
+        <span class="cred-breach-badge">Optional</span>
+      </div>
+      <div class="cred-breach-dropzone" id="cred-breach-dropzone">
+        <div class="cred-breach-dropzone-icon">📋</div>
+        <div class="cred-breach-dropzone-text">Upload credential breach CSV</div>
+        <div class="cred-breach-dropzone-hint">SecurityScorecard "compromised credentials" export · Will add a dedicated breach table to the report</div>
+        <button class="cred-breach-dropzone-btn" id="cred-breach-browse-btn" type="button">Choose File</button>
+        <input type="file" id="cred-breach-input" accept=".csv" style="display:none">
+      </div>
+      <div class="cred-breach-preview" id="cred-breach-preview">
+        <div class="cred-breach-preview-icon">📋</div>
+        <div class="cred-breach-preview-info">
+          <div class="cred-breach-preview-name" id="cred-breach-preview-name"></div>
+          <div class="cred-breach-preview-count" id="cred-breach-preview-count"></div>
+        </div>
+        <button class="cred-breach-remove" id="cred-breach-remove" title="Remove file">✕</button>
       </div>
     </div>
     
@@ -2732,6 +2972,7 @@ input[type="file"] {
     <button class="toolbar-action btn-back" id="btn-back">← New Report</button>
     <button class="toolbar-action btn-print" id="btn-print">🖨️ Print</button>
     <button class="toolbar-action btn-pdf" id="btn-pdf">📄 Export PDF</button>
+    <button class="btn-theme" id="btn-theme" title="Toggle light/dark theme" onclick="toggleTheme()">🌙</button>
   </div>
   <div id="report-pages"></div>
 </div>
@@ -2774,7 +3015,8 @@ let state = {
   logoNaturalHeight: null, // natural height of the logo image in pixels
   analystName: '',
   reportTitle: '',
-  assessmentPeriod: ''
+  assessmentPeriod: '',
+  credentialBreachData: [] // parsed rows from credential breach CSV
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -2816,7 +3058,17 @@ const elements = {
   // Report options
   analystNameInput: document.getElementById('analyst-name-input'),
   reportTitleInput: document.getElementById('report-title-input'),
-  assessmentPeriodInput: document.getElementById('assessment-period-input')
+  assessmentPeriodInput: document.getElementById('assessment-period-input'),
+  // Credential breach upload elements
+  credBreachDropzone: document.getElementById('cred-breach-dropzone'),
+  credBreachInput: document.getElementById('cred-breach-input'),
+  credBreachBrowseBtn: document.getElementById('cred-breach-browse-btn'),
+  credBreachPreview: document.getElementById('cred-breach-preview'),
+  credBreachPreviewName: document.getElementById('cred-breach-preview-name'),
+  credBreachPreviewCount: document.getElementById('cred-breach-preview-count'),
+  credBreachRemove: document.getElementById('cred-breach-remove'),
+  // Theme toggle
+  btnTheme: document.getElementById('btn-theme')
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -2977,6 +3229,96 @@ function removeLogo() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  CREDENTIAL BREACH FILE HANDLING
+// ═══════════════════════════════════════════════════════════════
+elements.credBreachBrowseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  elements.credBreachInput.click();
+});
+
+elements.credBreachDropzone.addEventListener('click', () => elements.credBreachInput.click());
+
+elements.credBreachDropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  elements.credBreachDropzone.style.borderColor = 'var(--accent)';
+});
+
+elements.credBreachDropzone.addEventListener('dragleave', () => {
+  elements.credBreachDropzone.style.borderColor = '';
+});
+
+elements.credBreachDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  elements.credBreachDropzone.style.borderColor = '';
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.toLowerCase().endsWith('.csv')) {
+    handleCredBreachFile(file);
+  }
+});
+
+elements.credBreachInput.addEventListener('change', () => {
+  const file = elements.credBreachInput.files[0];
+  if (file) {
+    handleCredBreachFile(file);
+    elements.credBreachInput.value = '';
+  }
+});
+
+elements.credBreachRemove.addEventListener('click', removeCredBreach);
+
+function handleCredBreachFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const result = Papa.parse(e.target.result, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: h => h.trim()
+    });
+    state.credentialBreachData = result.data;
+    elements.credBreachPreviewName.textContent = file.name;
+    elements.credBreachPreviewCount.textContent = `${result.data.length} breach record${result.data.length !== 1 ? 's' : ''} loaded`;
+    elements.credBreachDropzone.style.display = 'none';
+    elements.credBreachPreview.classList.add('visible');
+  };
+  reader.readAsText(file);
+}
+
+function removeCredBreach() {
+  state.credentialBreachData = [];
+  elements.credBreachPreview.classList.remove('visible');
+  elements.credBreachDropzone.style.display = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  THEME MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  html.setAttribute('data-theme', newTheme);
+  const icon = newTheme === 'light' ? '☀️' : '🌙';
+  ['btn-theme', 'btn-theme-upload'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.textContent = icon;
+  });
+  try { localStorage.setItem('reportTheme', newTheme); } catch (_) {}
+}
+
+// Apply saved theme on load
+(function initTheme() {
+  let saved = 'dark';
+  try { saved = localStorage.getItem('reportTheme') || 'dark'; } catch (_) {}
+  document.documentElement.setAttribute('data-theme', saved);
+  const icon = saved === 'light' ? '☀️' : '🌙';
+  ['btn-theme', 'btn-theme-upload'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.textContent = icon;
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════
 //  REPORT GENERATION
 // ═══════════════════════════════════════════════════════════════
 elements.generateBtn.addEventListener('click', generateReport);
@@ -2999,6 +3341,7 @@ async function loadSampleData() {
   
   state.entities = [];
   state.allIssues = [];
+  state.credentialBreachData = [];
   
   // List of sample files to load from /data folder
   const sampleFiles = [
@@ -3010,7 +3353,7 @@ async function loadSampleData() {
     const fileInfo = sampleFiles[i];
     
     elements.loaderStatus.textContent = `Loading ${fileInfo.entityName}…`;
-    elements.loaderBar.style.width = `${(i / sampleFiles.length) * 70}%`;
+    elements.loaderBar.style.width = `${(i / sampleFiles.length) * 60}%`;
     
     try {
       const response = await fetch(`data/${fileInfo.name}`);
@@ -3050,6 +3393,29 @@ async function loadSampleData() {
     return;
   }
   
+  // Load credential breach data from data folder
+  elements.loaderStatus.textContent = 'Loading credential breach data…';
+  elements.loaderBar.style.width = '65%';
+  try {
+    const credFiles = [
+      'SecurityScorecard - ABC - historical_compromised_credentials_found - findings - March 6, 2026.csv'
+    ];
+    for (const credFile of credFiles) {
+      const resp = await fetch(`data/${encodeURIComponent(credFile)}`);
+      if (resp.ok) {
+        const text = await resp.text();
+        const result = Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: h => h.trim()
+        });
+        state.credentialBreachData = result.data;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not load credential breach file:', err);
+  }
+  
   elements.loaderBar.style.width = '85%';
   elements.loaderStatus.textContent = 'Analyzing data…';
   await sleep(200);
@@ -3083,6 +3449,7 @@ async function generateReport() {
   
   state.entities = [];
   state.allIssues = [];
+  // credentialBreachData keeps whatever was uploaded via the cred breach zone
   
   for (let i = 0; i < state.files.length; i++) {
     const file = state.files[i];
@@ -3265,18 +3632,20 @@ function renderPages(index) {
   state.detailedFindingsSeverity = 'ALL';
   state.detailedFindingsExpanded = false;
   
-  const totalPages = 8;
+  const hasCredBreach = state.credentialBreachData && state.credentialBreachData.length > 0;
+  const totalPages = hasCredBreach ? 9 : 8;
   
   elements.reportPages.innerHTML = 
     renderCoverPage(data, entityName) +
-    renderTOCPage(entityName, totalPages) +
+    renderTOCPage(entityName, totalPages, hasCredBreach) +
     renderExecutiveSummary(data, entityName, 2, totalPages) +
     renderDomainAnalysis(data, entityName, 3, totalPages) +
     renderHighMediumFindings(data, entityName, 4, totalPages) +
     renderCVEAnalysis(data, entityName, 5, totalPages) +
     renderLowInfoFindings(data, entityName, 6, totalPages) +
     renderDetailedFindingsPage(data, entityName, 7, totalPages) +
-    renderRemediationRoadmap(data, entityName, 8, totalPages);
+    (hasCredBreach ? renderCredentialBreachPage(state.credentialBreachData, entityName, 8, totalPages) : '') +
+    renderRemediationRoadmap(data, entityName, hasCredBreach ? 9 : 8, totalPages);
 }
 
 // Register issues in the registry for safe click handling (prevents XSS)
@@ -3431,11 +3800,11 @@ function renderDonut(severity, size = 180) {
   
   return `
     <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-      <circle cx="${cx}" cy="${cy}" r="${R + 2}" fill="none" stroke="#1e2a40" stroke-width="1.5"/>
+      <circle cx="${cx}" cy="${cy}" r="${R + 2}" fill="none" stroke="var(--donut-ring)" stroke-width="1.5"/>
       ${paths}
-      <circle cx="${cx}" cy="${cy}" r="${ri}" fill="#0f1520"/>
-      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${size > 150 ? 24 : 18}" fill="#f8fafc">${total}</text>
-      <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b" letter-spacing="1.5">ISSUES</text>
+      <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--donut-inner)"/>
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${size > 150 ? 24 : 18}" fill="var(--donut-text)">${total}</text>
+      <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="var(--donut-label)" letter-spacing="1.5">ISSUES</text>
     </svg>
   `;
 }
@@ -3539,7 +3908,7 @@ function renderCoverPage(data, entityName) {
   `;
 }
 
-function renderTOCPage(entityName, totalPages) {
+function renderTOCPage(entityName, totalPages, hasCredBreach) {
   const date = formatDate();
   const sections = [
     ['01', 'Cover Page', 'Report overview, classification and summary KPIs', '1'],
@@ -3549,8 +3918,13 @@ function renderTOCPage(entityName, totalPages) {
     ['05', 'CVE Vulnerability Analysis', 'CVE intelligence registry and exposure mapping', '5'],
     ['06', 'Low & Informational Findings', 'Background risk catalogue and informational advisories', '6'],
     ['07', 'Detailed Findings Report', 'Complete findings with descriptions, analysis & recommendations', '7'],
-    ['08', 'Remediation Roadmap', 'Prioritized P1/P2/P3 action plan with timelines', '8'],
   ];
+  if (hasCredBreach) {
+    sections.push(['08', 'Credential Breach Intelligence', 'Compromised credentials, stealer malware exposure and affected domains', '8']);
+    sections.push(['09', 'Remediation Roadmap', 'Prioritized P1/P2/P3 action plan with timelines', '9']);
+  } else {
+    sections.push(['08', 'Remediation Roadmap', 'Prioritized P1/P2/P3 action plan with timelines', '8']);
+  }
   
   return `
     <div class="page" id="page-toc" style="min-height: 1180px; background: var(--bg-primary)">
@@ -4453,6 +4827,184 @@ function updateDetailedPagination(totalCount) {
 }
 
 
+// ═══════════════════════════════════════════════════════════════
+//  CREDENTIAL BREACH PAGE
+// ═══════════════════════════════════════════════════════════════
+function renderCredentialBreachPage(breachData, entityName, pageNum, totalPages) {
+  if (!breachData || breachData.length === 0) return '';
+  
+  // Compute summary statistics
+  const domains = new Set(breachData.map(r => (r['Domain'] || '').toLowerCase()).filter(Boolean));
+  const users   = new Set(breachData.map(r => (r['User Name'] || '').trim().toLowerCase()).filter(Boolean));
+  const stealers = {};
+  const countries = {};
+  breachData.forEach(r => {
+    const s = (r['Stealer Name'] || '').trim();
+    if (s) stealers[s] = (stealers[s] || 0) + 1;
+    const c = (r['Country'] || '').trim();
+    if (c) countries[c] = (countries[c] || 0) + 1;
+  });
+  const topStealer = Object.entries(stealers).sort((a, b) => b[1] - a[1])[0];
+  const topCountry = Object.entries(countries).sort((a, b) => b[1] - a[1])[0];
+
+  // Prepare table rows (max 30 for display)
+  const rows = breachData.slice(0, 30);
+
+  return `
+    <div class="page" id="page-cred-breach" style="min-height: 1180px">
+      <div class="page-accent" style="background: linear-gradient(180deg, #ef4444, #dc2626, transparent)"></div>
+      <div class="page-header">
+        <div class="page-section" style="color: #ef4444">Credential Breach Intelligence</div>
+        <div class="page-entity">${escapeHtml(entityName)}</div>
+      </div>
+      <div class="page-content">
+
+        <div class="section-header">
+          <div class="section-icon">🔐</div>
+          <div>
+            <div class="section-title">Compromised Credential Exposure</div>
+            <div class="section-subtitle">Stealer malware–sourced credential breaches detected via SecurityScorecard breach intelligence feeds</div>
+          </div>
+        </div>
+        <div class="section-divider"></div>
+
+        <!-- Summary KPIs -->
+        <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+          <div class="kpi-card kpi-high">
+            <div class="kpi-value">${breachData.length}</div>
+            <div class="kpi-label">Total Records</div>
+            <div class="kpi-percent">Breach entries detected</div>
+          </div>
+          <div class="kpi-card kpi-medium">
+            <div class="kpi-value">${domains.size}</div>
+            <div class="kpi-label">Affected Domains</div>
+            <div class="kpi-percent">Unique portals compromised</div>
+          </div>
+          <div class="kpi-card kpi-low">
+            <div class="kpi-value">${users.size}</div>
+            <div class="kpi-label">Unique Users</div>
+            <div class="kpi-percent">Distinct accounts at risk</div>
+          </div>
+          <div class="kpi-card kpi-info">
+            <div class="kpi-value">${topStealer ? escapeHtml(topStealer[0]) : '—'}</div>
+            <div class="kpi-label">Primary Stealer</div>
+            <div class="kpi-percent">${topStealer ? topStealer[1] + ' records' : 'N/A'}</div>
+          </div>
+        </div>
+
+        <!-- Breach Intelligence Notice -->
+        <div style="background: var(--critical-bg); border: 1px solid var(--critical-br); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start;">
+          <span style="font-size: 18px; flex-shrink: 0;">⚠️</span>
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--critical); margin-bottom: 4px;">CRITICAL — IMMEDIATE ACTION REQUIRED</div>
+            <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+              The following credentials were exfiltrated by stealer malware and are circulating in underground marketplaces.
+              All affected accounts must undergo <strong>immediate password resets</strong> and <strong>MFA enforcement</strong>.
+              Leaked passwords are masked in compliance with data handling policies. Source IP addresses indicate infection geography.
+            </div>
+          </div>
+        </div>
+
+        <!-- Breach Data Table -->
+        <div class="section-header">
+          <div class="section-icon">📋</div>
+          <div>
+            <div class="section-title">Detailed Breach Records</div>
+            <div class="section-subtitle">
+              Showing ${Math.min(30, breachData.length)} of ${breachData.length} records
+              ${topCountry ? ` · Primary geography: ${escapeHtml(topCountry[0])}` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="section-divider"></div>
+
+        <table class="data-table" style="font-size: 11px;">
+          <thead>
+            <tr>
+              <th style="width: 18%">Domain / Portal</th>
+              <th style="width: 11%">Username</th>
+              <th style="width: 9%">Password</th>
+              <th style="width: 13%">Infection Date</th>
+              <th style="width: 8%">Stealer</th>
+              <th style="width: 7%">Country</th>
+              <th style="width: 16%">Operating System</th>
+              <th style="width: 18%">First Observed</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => {
+              const domain = (r['Domain'] || '').trim();
+              const user   = (r['User Name'] || '').trim();
+              const pwd    = (r['Leaked Password'] || '').trim();
+              const inf    = (r['Infection Date'] || '').trim();
+              const steal  = (r['Stealer Name'] || '').trim();
+              const cntry  = (r['Country'] || '').trim();
+              const os     = (r['Operating System'] || '').trim();
+              const first  = (r['First Observed'] || '').trim().replace('T', ' ').slice(0, 16);
+              const stealColor = steal.toLowerCase() === 'redline' ? '#ef4444'
+                : steal.toLowerCase() === 'vidar' ? '#f97316'
+                : steal.toLowerCase() === 'raccoon' ? '#eab308'
+                : '#8b5cf6';
+              return `
+                <tr>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent)">${escapeHtml(truncate(domain, 35))}</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-primary)">${escapeHtml(truncate(user, 18))}</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px">${escapeHtml(pwd || '●●●●●●●●')}</td>
+                  <td style="font-size: 10px; color: var(--text-secondary)">${escapeHtml(inf)}</td>
+                  <td>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: ${stealColor}; background: rgba(0,0,0,0.15); border-radius: 4px; padding: 2px 6px;">
+                      ${escapeHtml(steal || '—')}
+                    </span>
+                  </td>
+                  <td style="font-size: 10px; color: var(--text-muted)">${escapeHtml(cntry || '—')}</td>
+                  <td style="font-size: 10px; color: var(--text-secondary)">${escapeHtml(truncate(os, 28))}</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted)">${escapeHtml(first)}</td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        ${breachData.length > 30 ? `
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 12px; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: var(--bg-tertiary);">
+            ⚠️ Showing 30 of ${breachData.length} total breach records. Full dataset available in the raw CSV export.
+          </div>
+        ` : ''}
+
+        <!-- Stealer Distribution -->
+        ${Object.keys(stealers).length > 0 ? `
+          <div class="section-header" style="margin-top: 24px">
+            <div class="section-icon">🦠</div>
+            <div>
+              <div class="section-title">Stealer Malware Distribution</div>
+              <div class="section-subtitle">Breakdown of credential-stealing malware families identified</div>
+            </div>
+          </div>
+          <div class="section-divider"></div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 4px;">
+            ${Object.entries(stealers).sort((a,b) => b[1]-a[1]).map(([name, count]) => {
+              const pct = breachData.length ? (count / breachData.length * 100).toFixed(1) : 0;
+              const color = name.toLowerCase() === 'redline' ? '#ef4444'
+                : name.toLowerCase() === 'vidar' ? '#f97316'
+                : name.toLowerCase() === 'raccoon' ? '#eab308'
+                : '#8b5cf6';
+              return `
+                <div style="background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; border-left: 3px solid ${color};">
+                  <div style="font-size: 11px; font-weight: 700; color: ${color}; margin-bottom: 4px;">${escapeHtml(name)}</div>
+                  <div style="font-size: 22px; font-weight: 900; color: var(--text-primary); line-height: 1;">${count}</div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); margin-top: 2px;">${pct}% of records</div>
+                  <div style="height: 4px; background: var(--border-subtle); border-radius: 2px; margin-top: 8px; overflow: hidden;">
+                    <div style="height: 100%; width: ${pct}%; background: ${color}; border-radius: 2px;"></div>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>
+        ` : ''}
+
+      </div>
+      ${pageFooter(entityName, pageNum, totalPages)}
+    </div>
+  `;
+}
+
 function renderRemediationRoadmap(data, entityName, pageNum, totalPages) {
   const { severity, byGroup } = data;
   
@@ -4461,7 +5013,9 @@ function renderRemediationRoadmap(data, entityName, pageNum, totalPages) {
   const hasSSL = titles.some(t => /ssl|tls|cipher|protocol/i.test(t));
   const hasCookie = titles.some(t => /cookie|session/i.test(t));
   const hasPatch = titles.some(t => /patch|cve|vuln/i.test(t));
-  const hasCreds = titles.some(t => /credential|breach|password|risk/i.test(t));
+  // Always add credential remediation if breach data is present
+  const hasCreds = (state.credentialBreachData && state.credentialBreachData.length > 0) ||
+    titles.some(t => /credential|breach|password|risk/i.test(t));
   const hasHeaders = [...(byGroup.LOW || [])].some(i => /csp|hsts|header/i.test(i.title));
   const hasCert = [...(byGroup.LOW || []), ...(byGroup.INFO || [])].some(i => /cert|expire|self.sign/i.test(i.title));
   
@@ -5335,7 +5889,75 @@ async function exportPDF() {
     
     addText(`Page 6`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
     
-    // Page 7: Remediation Roadmap
+    // Page 7 (optional): Credential Breach Intelligence
+    if (state.credentialBreachData && state.credentialBreachData.length > 0) {
+      elements.pdfStatus.textContent = 'Generating credential breach report...';
+      elements.pdfBar.style.width = '85%';
+      await sleep(100);
+      
+      pdf.addPage();
+      addText('CREDENTIAL BREACH INTELLIGENCE', margin, 20, { size: 14, style: 'bold', color: '#ef4444' });
+      addText('Compromised credentials detected via stealer malware intelligence feeds', margin, 28, { size: 9, color: '#64748b' });
+      
+      const cbData = state.credentialBreachData;
+      const cbDomains = new Set(cbData.map(r => (r['Domain'] || '').toLowerCase()).filter(Boolean));
+      const cbUsers   = new Set(cbData.map(r => (r['User Name'] || '').trim().toLowerCase()).filter(Boolean));
+      const cbStealers = {};
+      cbData.forEach(r => {
+        const s = (r['Stealer Name'] || '').trim();
+        if (s) cbStealers[s] = (cbStealers[s] || 0) + 1;
+      });
+      
+      // Summary table
+      pdf.autoTable({
+        startY: 34,
+        body: [
+          ['Total Breach Records', String(cbData.length)],
+          ['Affected Domains', String(cbDomains.size)],
+          ['Unique Accounts', String(cbUsers.size)],
+          ['Stealer Families', Object.keys(cbStealers).join(', ') || '—']
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [239, 68, 68] },
+        margin: { left: margin, right: margin },
+        styles: { fontSize: 9 },
+        columnStyles: {
+          0: { cellWidth: 60, fontStyle: 'bold', textColor: [100, 116, 139] },
+          1: { textColor: [15, 23, 42] }
+        }
+      });
+      
+      addText('Breach Records', margin, pdf.lastAutoTable.finalY + 12, { size: 11, style: 'bold', color: '#ef4444' });
+      
+      pdf.autoTable({
+        startY: pdf.lastAutoTable.finalY + 18,
+        head: [['Domain', 'Username', 'Password', 'Infection Date', 'Stealer', 'Country', 'OS']],
+        body: cbData.slice(0, 40).map(r => [
+          truncate((r['Domain'] || '—'), 30),
+          truncate((r['User Name'] || '—'), 18),
+          (r['Leaked Password'] || '●●●●●●●●'),
+          (r['Infection Date'] || '—'),
+          (r['Stealer Name'] || '—'),
+          (r['Country'] || '—'),
+          truncate((r['Operating System'] || '—'), 22)
+        ]),
+        theme: 'striped',
+        headStyles: { fillColor: [239, 68, 68], fontSize: 7 },
+        margin: { left: margin, right: margin },
+        styles: { fontSize: 7, cellPadding: 1.5 }
+      });
+      
+      if (cbData.length > 40) {
+        const noteY = pdf.lastAutoTable.finalY + 8;
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text(`Showing 40 of ${cbData.length} records. Full dataset available in CSV export.`, margin, noteY);
+      }
+      
+      addText(`Page 7`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
+    }
+    
+    // Remediation Roadmap (last page)
     elements.pdfStatus.textContent = 'Generating remediation roadmap...';
     elements.pdfBar.style.width = '90%';
     await sleep(100);
@@ -5388,7 +6010,8 @@ async function exportPDF() {
       styles: { fontSize: 8 }
     });
     
-    addText(`Page 7`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
+    const remedPageNum = (state.credentialBreachData && state.credentialBreachData.length > 0) ? 8 : 7;
+    addText(`Page ${remedPageNum}`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
     
     // Save PDF
     elements.pdfBar.style.width = '100%';
@@ -5438,6 +6061,8 @@ function showIssueById(issueId) {
 // Make functions globally available
 window.removeFile = removeFile;
 window.removeLogo = removeLogo;
+window.removeCredBreach = removeCredBreach;
+window.toggleTheme = toggleTheme;
 window.switchEntity = switchEntity;
 window.switchTab = switchTab;
 window.showIssueDetails = showIssueDetails;
