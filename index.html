@@ -3101,12 +3101,44 @@ elements.fileInput.addEventListener('change', () => {
   elements.fileInput.value = '';
 });
 
+// Maximum file size (10MB) to prevent browser freeze on large CSVs
+const MAX_CSV_FILE_SIZE = 10 * 1024 * 1024;
+
 function handleFiles(files) {
+  let skippedFiles = [];
+  
   files.forEach(file => {
-    if (!state.files.find(f => f.name === file.name)) {
-      state.files.push(file);
+    // Check for duplicate by name
+    if (state.files.find(f => f.name === file.name)) {
+      return;
     }
+    
+    // Validate file size
+    if (file.size > MAX_CSV_FILE_SIZE) {
+      skippedFiles.push(`${file.name} (exceeds 10MB limit)`);
+      return;
+    }
+    
+    // Validate file type - use .csv extension as primary check since MIME types vary
+    // Only accept files with .csv extension OR specific CSV MIME types
+    const csvMimeTypes = ['text/csv', 'application/csv', 'application/vnd.ms-excel'];
+    const hasCsvExtension = file.name.toLowerCase().endsWith('.csv');
+    const hasCsvMimeType = csvMimeTypes.includes(file.type);
+    
+    if (!hasCsvExtension && !hasCsvMimeType) {
+      skippedFiles.push(`${file.name} (not a CSV file)`);
+      return;
+    }
+    
+    state.files.push(file);
   });
+  
+  if (skippedFiles.length > 0) {
+    // Log to console for debugging and show user-friendly message
+    console.warn('Files skipped during upload:', skippedFiles);
+    alert('Some files were skipped:\n' + skippedFiles.join('\n'));
+  }
+  
   renderFileList();
 }
 
@@ -3299,9 +3331,13 @@ function toggleTheme() {
   const newTheme = isLight ? 'dark' : 'light';
   html.setAttribute('data-theme', newTheme);
   const icon = newTheme === 'light' ? '☀️' : '🌙';
+  const ariaLabel = newTheme === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
   ['btn-theme', 'btn-theme-upload'].forEach(id => {
     const btn = document.getElementById(id);
-    if (btn) btn.textContent = icon;
+    if (btn) {
+      btn.textContent = icon;
+      btn.setAttribute('aria-label', ariaLabel);
+    }
   });
   try { localStorage.setItem('reportTheme', newTheme); } catch (_) {}
 }
@@ -3312,9 +3348,13 @@ function toggleTheme() {
   try { saved = localStorage.getItem('reportTheme') || 'dark'; } catch (_) {}
   document.documentElement.setAttribute('data-theme', saved);
   const icon = saved === 'light' ? '☀️' : '🌙';
+  const ariaLabel = saved === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
   ['btn-theme', 'btn-theme-upload'].forEach(id => {
     const btn = document.getElementById(id);
-    if (btn) btn.textContent = icon;
+    if (btn) {
+      btn.textContent = icon;
+      btn.setAttribute('aria-label', ariaLabel);
+    }
   });
 })();
 
@@ -3334,6 +3374,10 @@ async function loadSampleData() {
   state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
   state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim()) || '';
   state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim()) || '';
+  
+  // Disable the sample data button to prevent rapid clicks
+  const sampleBtn = document.getElementById('load-sample-btn');
+  if (sampleBtn) sampleBtn.disabled = true;
   
   // Show loading screen
   elements.uploadScreen.style.display = 'none';
@@ -3389,6 +3433,9 @@ async function loadSampleData() {
   if (state.entities.length === 0) {
     elements.loadingScreen.classList.remove('active');
     elements.uploadScreen.style.display = '';
+    // Re-enable sample button
+    const sampleBtn = document.getElementById('load-sample-btn');
+    if (sampleBtn) sampleBtn.disabled = false;
     alert('Could not load sample data files. Please ensure the data folder contains CSV files.');
     return;
   }
@@ -3438,10 +3485,11 @@ async function loadSampleData() {
 async function generateReport() {
   if (state.files.length === 0) return;
   
-  // Capture report options
-  state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
-  state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim()) || '';
-  state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim()) || '';
+  // Capture report options with length validation
+  const maxInputLen = 255;
+  state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim().slice(0, maxInputLen)) || '';
+  state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim().slice(0, maxInputLen)) || '';
+  state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim().slice(0, maxInputLen)) || '';
   
   // Show loading screen
   elements.uploadScreen.style.display = 'none';
@@ -3449,33 +3497,78 @@ async function generateReport() {
   
   state.entities = [];
   state.allIssues = [];
-  // credentialBreachData keeps whatever was uploaded via the cred breach zone
+  // Note: credentialBreachData keeps whatever was uploaded via the cred breach zone
+  
+  // Required columns for SecurityScorecard Full Issues Report
+  const requiredColumns = ['ISSUE TYPE SEVERITY', 'ISSUE TYPE TITLE'];
+  let hasErrors = false;
+  let errorMessages = [];
   
   for (let i = 0; i < state.files.length; i++) {
     const file = state.files[i];
-    const entityName = document.getElementById(`entity-name-${i}`).value.trim() || file.name;
+    const entityNameInput = document.getElementById(`entity-name-${i}`);
+    const entityName = (entityNameInput && entityNameInput.value.trim()) || file.name.replace(/\.csv$/i, '');
     
     elements.loaderStatus.textContent = `Parsing ${entityName}…`;
     elements.loaderBar.style.width = `${(i / state.files.length) * 70}%`;
     
-    const text = await file.text();
-    const result = Papa.parse(text, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: h => h.trim()
-    });
-    
-    state.entities.push({
-      name: entityName,
-      rows: result.data
-    });
-    
-    // Store all issues with entity reference
-    result.data.forEach(row => {
-      state.allIssues.push({ ...row, _entityName: entityName });
-    });
+    try {
+      const text = await file.text();
+      const result = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: h => h.trim()
+      });
+      
+      // Check for parsing errors
+      if (result.errors && result.errors.length > 0) {
+        console.warn(`CSV parsing warnings for ${entityName}:`, result.errors);
+      }
+      
+      // Validate required columns exist
+      const headers = result.meta && result.meta.fields ? result.meta.fields : [];
+      const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+      
+      if (missingColumns.length > 0) {
+        errorMessages.push(`${entityName}: Missing columns: ${missingColumns.join(', ')}`);
+        // Continue processing but warn user
+      }
+      
+      // Filter out completely empty rows
+      const validRows = result.data.filter(row => {
+        return Object.values(row).some(v => v && v.toString().trim());
+      });
+      
+      state.entities.push({
+        name: entityName,
+        rows: validRows
+      });
+      
+      // Store all issues with entity reference
+      validRows.forEach(row => {
+        state.allIssues.push({ ...row, _entityName: entityName });
+      });
+      
+    } catch (parseError) {
+      hasErrors = true;
+      errorMessages.push(`${entityName}: ${parseError.message}`);
+      console.error(`Error parsing ${entityName}:`, parseError);
+    }
     
     await sleep(100);
+  }
+  
+  // Show warning if there were issues
+  if (errorMessages.length > 0) {
+    console.warn('CSV processing warnings:', errorMessages);
+  }
+  
+  // Check if we have any valid data to process
+  if (state.entities.length === 0) {
+    elements.loadingScreen.classList.remove('active');
+    elements.uploadScreen.style.display = '';
+    alert('No valid data could be parsed from the uploaded files.');
+    return;
   }
   
   elements.loaderBar.style.width = '85%';
@@ -3511,23 +3604,55 @@ function analyzeEntity(rows) {
   const cveSet = new Set();
   const byGroup = { HIGH: [], MEDIUM: [], LOW: [], INFO: [] };
   
+  // Track unrecognized severity values for debugging
+  const unrecognizedSeverities = new Set();
+  
   rows.forEach(row => {
     const sev = (row['ISSUE TYPE SEVERITY'] || '').trim().toUpperCase();
-    const factor = (row['FACTOR NAME'] || '').trim();
+    const factor = (row['FACTOR NAME'] || '').trim() || 'Uncategorized';
     const title = (row['ISSUE TYPE TITLE'] || '').trim();
-    const cve = (row['CVE'] || '').trim();
+    const cveRaw = (row['CVE'] || '').trim();
     
-    if (sev in severity) severity[sev]++;
-    if (factor) factors[factor] = (factors[factor] || 0) + 1;
+    // Handle valid severity or default to INFO for unrecognized
+    let validSev;
+    if (sev in severity) {
+      validSev = sev;
+    } else if (sev && title) {
+      // Log warning for unrecognized severity values
+      unrecognizedSeverities.add(sev);
+      validSev = 'INFO';
+    } else if (title) {
+      validSev = 'INFO';
+    } else {
+      validSev = null;
+    }
+    
+    if (validSev) {
+      severity[validSev]++;
+      factors[factor] = (factors[factor] || 0) + 1;
+    }
+    
     if (title) titleMap[title] = (titleMap[title] || 0) + 1;
-    if (cve) cveSet.add(cve);
+    
+    // Handle multiple CVEs in the field
+    if (cveRaw) {
+      const cves = cveRaw.split(/[,;\s]+/).filter(c => c.trim());
+      cves.forEach(c => {
+        const cleanCVE = c.trim();
+        if (isValidCVE(cleanCVE)) {
+          cveSet.add(cleanCVE);
+        } else if (cleanCVE) {
+          cveSet.add(cleanCVE); // Still track non-standard CVEs
+        }
+      });
+    }
     
     const issue = {
       id: row['ISSUE ID'] || generateId(),
       title: title,
       factor: factor,
-      severity: sev,
-      cve: cve,
+      severity: validSev || 'INFO',
+      cve: cveRaw,
       hostname: (row['HOSTNAME'] || '').trim(),
       ip: (row['IP ADDRESSES'] || '').trim(),
       ports: (row['PORTS'] || '').trim(),
@@ -3548,8 +3673,16 @@ function analyzeEntity(rows) {
       version: (row['VERSION'] || '').trim(),
     };
     
-    if (sev in byGroup) byGroup[sev].push(issue);
+    // Only add to byGroup if we have a valid severity and at least a title
+    if (validSev && title && validSev in byGroup) {
+      byGroup[validSev].push(issue);
+    }
   });
+  
+  // Log warning for any unrecognized severity values found
+  if (unrecognizedSeverities.size > 0) {
+    console.warn('Unrecognized severity values in CSV data (defaulted to INFO):', [...unrecognizedSeverities]);
+  }
   
   const topTitles = Object.entries(titleMap).sort((a, b) => b[1] - a[1]);
   
@@ -3708,8 +3841,11 @@ function getSeverityColor(sev) {
   return colors[sev] || '#64748b';
 }
 
+// Cache for dynamically generated factor colors
+const factorColorCache = {};
+
 function getFactorColor(factor) {
-  const colors = {
+  const staticColors = {
     'Patching Cadence': '#f59e0b',
     'Network Security': '#0ea5e9',
     'Application Security': '#ef4444',
@@ -3719,9 +3855,30 @@ function getFactorColor(factor) {
     'Endpoint Security': '#f97316',
     'IP Reputation': '#ec4899',
     'Cubit Score': '#6366f1',
-    'Social Engineering': '#14b8a6'
+    'Social Engineering': '#14b8a6',
+    'Hacker Chatter': '#dc2626',
+    'Information Leakage': '#a855f7',
+    'Brand Monitoring': '#84cc16',
+    'Uncategorized': '#64748b'
   };
-  return colors[factor] || '#64748b';
+  
+  // Return known color if available
+  if (staticColors[factor]) return staticColors[factor];
+  
+  // Return cached dynamic color if already generated
+  if (factorColorCache[factor]) return factorColorCache[factor];
+  
+  // Generate a deterministic color based on the factor name (HSL color wheel)
+  let hash = 0;
+  for (let i = 0; i < factor.length; i++) {
+    hash = factor.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash % 360);
+  const color = `hsl(${hue}, 70%, 55%)`;
+  
+  // Cache the generated color
+  factorColorCache[factor] = color;
+  return color;
 }
 
 function getImpactColor(value) {
@@ -3738,16 +3895,59 @@ function severityBadge(sev) {
   return `<span class="severity-badge severity-${cls}">${s}</span>`;
 }
 
+// Validate CVE ID format
+function isValidCVE(cve) {
+  if (!cve) return false;
+  // CVE format: CVE-YYYY-NNNNN (year + at least 4 digits)
+  return /^CVE-\d{4}-\d{4,}$/i.test(cve.trim());
+}
+
+// Handle multiple CVEs (comma or space separated)
 function makeCVELink(cve) {
   if (!cve) return '—';
-  const url = `https://nvd.nist.gov/vuln/detail/${cve}`;
-  return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="cve-badge">${escapeHtml(cve)}</a>`;
+  
+  // Split on comma, space, or semicolon to handle multiple CVEs
+  const cves = cve.split(/[,;\s]+/).filter(c => c.trim());
+  
+  if (cves.length === 0) return '—';
+  
+  const links = cves.map(c => {
+    const cleanCVE = c.trim();
+    if (isValidCVE(cleanCVE)) {
+      const url = `https://nvd.nist.gov/vuln/detail/${cleanCVE}`;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="cve-badge" title="View ${cleanCVE} on NVD">${escapeHtml(cleanCVE)}</a>`;
+    }
+    // Add title/aria-label for accessibility when showing non-standard CVE format
+    return `<span class="cve-badge" style="opacity: 0.6" title="Non-standard CVE identifier" aria-label="Non-standard CVE identifier: ${escapeHtml(cleanCVE)}">${escapeHtml(cleanCVE)}</span>`;
+  });
+  
+  return links.join(' ');
+}
+
+// Validate URL for safe protocols
+function isValidUrl(url) {
+  if (!url) return false;
+  const urlLower = url.toLowerCase().trim();
+  // Block dangerous protocols that can be used for XSS attacks
+  const blockedProtocols = ['javascript:', 'data:', 'vbscript:', 'file:', 'blob:'];
+  for (const protocol of blockedProtocols) {
+    if (urlLower.startsWith(protocol)) return false;
+  }
+  // Must start with http, https, or be a relative URL
+  return urlLower.startsWith('http://') || urlLower.startsWith('https://') || urlLower.startsWith('//');
 }
 
 function makeClickableLink(url, maxLen = 40) {
   if (!url) return '—';
   const displayUrl = truncate(url, maxLen);
-  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="td-link" title="${escapeHtml(url)}">${escapeHtml(displayUrl)}</a>`;
+  
+  // Only create clickable link for valid URLs
+  if (isValidUrl(url)) {
+    return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="td-link" title="${escapeHtml(url)}">${escapeHtml(displayUrl)}</a>`;
+  }
+  
+  // Return non-clickable text for invalid/unsafe URLs
+  return `<span class="td-link" style="cursor: default; color: var(--text-muted);" title="${escapeHtml(url)}">${escapeHtml(displayUrl)}</span>`;
 }
 
 function pageFooter(entityName, pageNum, totalPages) {
@@ -5286,15 +5486,18 @@ function showIssueDetails(issue) {
   `;
   
   elements.issueModal.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent body scroll when modal open
 }
 
 elements.modalClose.addEventListener('click', () => {
   elements.issueModal.classList.remove('active');
+  document.body.style.overflow = ''; // Restore body scroll
 });
 
 elements.issueModal.addEventListener('click', (e) => {
   if (e.target === elements.issueModal) {
     elements.issueModal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore body scroll
   }
 });
 
@@ -5314,6 +5517,34 @@ elements.btnPrint.addEventListener('click', () => {
 elements.btnPdf.addEventListener('click', exportPDF);
 
 async function exportPDF() {
+  // Get current entity data first to check limits
+  let data, entityName;
+  if (state.activeEntityIndex === 'combined') {
+    data = getCombinedData(state.analyzedData);
+    entityName = 'Combined Analysis';
+  } else {
+    data = state.analyzedData[state.activeEntityIndex].data;
+    entityName = state.analyzedData[state.activeEntityIndex].name;
+  }
+  
+  // Calculate total findings
+  const allFindings = [
+    ...(data.byGroup.HIGH || []),
+    ...(data.byGroup.MEDIUM || []),
+    ...(data.byGroup.LOW || []),
+    ...(data.byGroup.INFO || [])
+  ];
+  
+  // Warn user if findings exceed PDF limits
+  if (allFindings.length > CONFIG.MAX_FINDINGS_IN_PDF) {
+    const proceed = confirm(
+      `This report contains ${allFindings.length} findings, but the PDF will only include the first ${CONFIG.MAX_FINDINGS_IN_PDF} detailed findings.\n\n` +
+      `High: ${data.severity.HIGH || 0}, Medium: ${data.severity.MEDIUM || 0}, Low: ${data.severity.LOW || 0}, Info: ${data.severity.INFO || 0}\n\n` +
+      `Click OK to proceed, or Cancel to review in the web report first.`
+    );
+    if (!proceed) return;
+  }
+  
   elements.pdfOverlay.classList.add('active');
   elements.pdfBar.style.width = '0%';
   elements.pdfStatus.textContent = 'Initializing PDF export...';
@@ -5323,24 +5554,25 @@ async function exportPDF() {
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: 'a4'
+      format: 'a4',
+      compress: true  // Enable compression to reduce file size
     });
-    
-    // Get current entity data
-    let data, entityName;
-    if (state.activeEntityIndex === 'combined') {
-      data = getCombinedData(state.analyzedData);
-      entityName = 'Combined Analysis';
-    } else {
-      data = state.analyzedData[state.activeEntityIndex].data;
-      entityName = state.analyzedData[state.activeEntityIndex].name;
-    }
     
     const date = formatDate();
     const pageWidth = 210;
     const pageHeight = 297;
     const margin = 15;
     const contentWidth = pageWidth - 2 * margin;
+    
+    // Set PDF metadata for document management systems
+    const reportTitle = state.reportTitle || 'Cyber Security Vulnerability Assessment Report';
+    pdf.setProperties({
+      title: reportTitle,
+      subject: `Security Assessment for ${entityName}`,
+      author: state.analystName || 'Security Report Generator',
+      keywords: 'security, vulnerability, assessment, CVE, SecurityScorecard',
+      creator: 'Security Report - Professional Vulnerability Report Platform'
+    });
     
     // Helper functions for PDF
     const addText = (text, x, y, options = {}) => {
@@ -6044,7 +6276,10 @@ async function exportPDF() {
 document.addEventListener('keydown', (e) => {
   // ESC to close modal
   if (e.key === 'Escape') {
-    elements.issueModal.classList.remove('active');
+    if (elements.issueModal.classList.contains('active')) {
+      elements.issueModal.classList.remove('active');
+      document.body.style.overflow = ''; // Restore body scroll
+    }
   }
   
   // Ctrl/Cmd + P to export PDF
