@@ -2788,6 +2788,331 @@ input[type="file"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFESSIONAL REPORT ENHANCEMENTS
+═══════════════════════════════════════════════════════════════ */
+
+/* Enhanced Print Styles */
+@media print {
+  body {
+    background: white !important;
+  }
+  
+  .page {
+    box-shadow: none !important;
+    border: none !important;
+    break-after: page;
+    page-break-after: always; /* fallback for older browsers */
+  }
+  
+  .toolbar, #btn-back, #btn-print, #btn-pdf {
+    display: none !important;
+  }
+}
+
+/* Data Table Enhancements */
+.data-table tbody tr {
+  transition: all var(--transition-fast);
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: rgba(14, 165, 233, 0.01);
+}
+
+.data-table tbody tr:hover {
+  background: rgba(14, 165, 233, 0.04);
+  transform: translateX(2px);
+}
+
+.data-table tbody tr:hover .td-title {
+  color: var(--accent);
+}
+
+/* Enhanced Severity Indicators */
+.severity-badge {
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.severity-badge:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Enhanced CVE Badge */
+.cve-badge {
+  transition: all var(--transition-fast);
+}
+
+.cve-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.2);
+}
+
+/* Professional Section Headers */
+.section-header {
+  position: relative;
+  padding-left: 0;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.3;
+}
+
+/* Enhanced KPI Cards */
+.kpi-card {
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.6;
+}
+
+.kpi-high::before { background: var(--critical); }
+.kpi-medium::before { background: var(--medium); }
+.kpi-low::before { background: var(--low); }
+.kpi-info::before { background: var(--info); }
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Enhanced Domain Cards */
+.domain-card {
+  transition: all var(--transition-medium);
+}
+
+.domain-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Enhanced Risk Cards */
+.risk-card {
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.risk-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+.risk-card:hover {
+  border-color: var(--accent-border);
+  transform: translateX(2px);
+}
+
+/* Enhanced Cover Page Stats Animation */
+.cover-stat {
+  transition: all var(--transition-medium);
+}
+
+.cover-stat:hover {
+  background: var(--bg-card);
+}
+
+.cover-stat-value {
+  transition: transform var(--transition-medium);
+}
+
+.cover-stat:hover .cover-stat-value {
+  transform: scale(1.05);
+}
+
+/* Entity Name Styling */
+.cover-entity-badge {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(14, 165, 233, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); }
+}
+
+/* Enhanced Progress Bars */
+.progress-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Enhanced TOC Items */
+.toc-item {
+  transition: all var(--transition-fast);
+}
+
+.toc-item:hover {
+  background: rgba(14, 165, 233, 0.02);
+  padding-left: var(--space-md);
+}
+
+.toc-item:hover .toc-number {
+  color: var(--accent);
+}
+
+/* Enhanced Remediation Cards */
+.remediation-card {
+  transition: all var(--transition-medium);
+}
+
+.remediation-card:hover {
+  border-color: var(--border-medium);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Finding Card Enhancements */
+.detail-card {
+  transition: all var(--transition-medium);
+}
+
+.detail-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
+}
+
+/* Professional Typography */
+.page-section {
+  position: relative;
+}
+
+.page-section::after {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 1px;
+  background: var(--accent);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Legend Items Enhancement */
+.legend-item {
+  transition: all var(--transition-fast);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.legend-item:hover {
+  background: rgba(14, 165, 233, 0.03);
+}
+
+/* Enhanced Modal */
+.modal-container {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Credential Breach Table Enhancements */
+.cred-breach-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.cred-breach-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Donut Chart Enhancement */
+svg path {
+  transition: all var(--transition-fast);
+}
+
+svg path:hover {
+  opacity: 1 !important;
+  filter: brightness(1.1);
+}
+
+/* Entity Tab Enhancements */
+.entity-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.entity-tab::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: all var(--transition-medium);
+  transform: translateX(-50%);
+}
+
+.entity-tab.active::before,
+.entity-tab:hover::before {
+  width: 80%;
+}
+
+/* Professional Page Headers */
+.page-header {
+  position: relative;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent 50%);
+  opacity: 0.3;
+}
 </style>
 </head>
 <body>
@@ -3369,6 +3694,147 @@ if (loadSampleBtn) {
   loadSampleBtn.addEventListener('click', loadSampleData);
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  ISSUE TYPE MAPPING FOR INDIVIDUAL FINDINGS CSVs
+// ═══════════════════════════════════════════════════════════════
+const ISSUE_TYPE_MAP = {
+  // Application Security
+  'cookie_missing_http_only': { factor: 'Application Security', title: "Session Cookie Missing 'HttpOnly' Attribute", severity: 'HIGH', recommendation: "Enable the 'HttpOnly' attribute on session cookies to prevent client-side script access. This mitigates XSS attacks that attempt to steal session tokens." },
+  'cookie_missing_secure_attribute': { factor: 'Application Security', title: "Session Cookie Missing 'Secure' Attribute", severity: 'HIGH', recommendation: "Enable the 'Secure' attribute on session cookies to ensure they are only transmitted over encrypted HTTPS connections." },
+  'csp_no_policy_v2': { factor: 'Application Security', title: 'Content Security Policy Not Implemented', severity: 'MEDIUM', recommendation: "Implement a Content Security Policy (CSP) header to mitigate XSS attacks and data injection vulnerabilities. Start with a restrictive policy and adjust as needed." },
+  'csp_unsafe_policy_v2': { factor: 'Application Security', title: 'Unsafe Content Security Policy', severity: 'MEDIUM', recommendation: "Review and strengthen your Content Security Policy. Remove unsafe-inline and unsafe-eval directives where possible. Use nonces or hashes for inline scripts." },
+  'unsafe_sri_v2': { factor: 'Application Security', title: 'Subresource Integrity Not Implemented', severity: 'LOW', recommendation: "Implement Subresource Integrity (SRI) for all third-party scripts and stylesheets to ensure they haven't been tampered with." },
+  'x_content_type_options_incorrect_v2': { factor: 'Application Security', title: 'X-Content-Type-Options Header Missing', severity: 'LOW', recommendation: "Add the X-Content-Type-Options: nosniff header to prevent browsers from MIME-sniffing responses away from the declared content type." },
+  'hsts_incorrect_v2': { factor: 'Application Security', title: 'HTTP Strict Transport Security Not Properly Configured', severity: 'MEDIUM', recommendation: "Implement HSTS with a minimum max-age of 31536000 seconds. Consider including subdomains and enabling preload." },
+  'redirect_chain_contains_http_v2': { factor: 'Application Security', title: 'Redirect Chain Contains HTTP', severity: 'MEDIUM', recommendation: "Ensure all redirects in the chain use HTTPS to prevent man-in-the-middle attacks during the redirect process." },
+  'domain_missing_https_v2': { factor: 'Application Security', title: 'Domain Missing HTTPS', severity: 'HIGH', recommendation: "Enable HTTPS on all domains and subdomains. Obtain and install valid SSL/TLS certificates and configure automatic HTTP to HTTPS redirects." },
+  
+  // Network Security
+  'tls_weak_cipher': { factor: 'Network Security', title: 'Weak TLS Cipher Suite Detected', severity: 'MEDIUM', recommendation: "Disable weak cipher suites (DES, 3DES, RC4, export ciphers). Configure servers to use only strong cipher suites with forward secrecy (ECDHE, DHE)." },
+  'tls_weak_protocol': { factor: 'Network Security', title: 'Weak TLS Protocol Version Supported', severity: 'MEDIUM', recommendation: "Disable TLS 1.0 and TLS 1.1. Configure servers to support only TLS 1.2 and TLS 1.3 with secure cipher suites." },
+  'ssh_weak_cipher': { factor: 'Network Security', title: 'SSH Weak Cipher Detected', severity: 'MEDIUM', recommendation: "Update SSH configuration to disable weak ciphers. Use strong algorithms like AES-256-GCM, ChaCha20-Poly1305 for encryption." },
+  'tlscert_expired': { factor: 'Network Security', title: 'Expired TLS Certificate', severity: 'HIGH', recommendation: "Renew the expired SSL/TLS certificate immediately. Implement certificate lifecycle monitoring and automated renewal processes." },
+  'tlscert_self_signed': { factor: 'Network Security', title: 'Self-Signed TLS Certificate', severity: 'MEDIUM', recommendation: "Replace self-signed certificates with certificates from a trusted Certificate Authority (CA) for production environments." },
+  'tlscert_excessive_expiration': { factor: 'Network Security', title: 'TLS Certificate with Excessive Expiration', severity: 'LOW', recommendation: "Consider using certificates with shorter validity periods (maximum 1 year) to reduce security risks from compromised keys." },
+  'tlscert_no_revocation': { factor: 'Network Security', title: 'TLS Certificate Missing Revocation Information', severity: 'LOW', recommendation: "Ensure certificates include OCSP and/or CRL information to allow clients to verify certificate revocation status." },
+  'open_port': { factor: 'Network Security', title: 'Open Port Detected', severity: 'INFO', recommendation: "Review open ports and close any unnecessary services. Implement firewall rules to restrict access to essential ports only." },
+  'service_ftp': { factor: 'Network Security', title: 'FTP Service Detected', severity: 'MEDIUM', recommendation: "Replace FTP with secure alternatives like SFTP or FTPS. If FTP is required, ensure it's properly secured and access is restricted." },
+  'service_http_proxy': { factor: 'Network Security', title: 'HTTP Proxy Service Detected', severity: 'INFO', recommendation: "Verify the HTTP proxy is properly configured and access-controlled. Consider whether the proxy is necessary for your infrastructure." },
+  'service_cloud_provider': { factor: 'Network Security', title: 'Cloud Provider Service Detected', severity: 'INFO', recommendation: "Ensure cloud services are properly configured with appropriate security controls and access restrictions." },
+  
+  // Patching Cadence
+  'patching_cadence_v3_critical': { factor: 'Patching Cadence', title: 'Critical Severity Unpatched Vulnerability', severity: 'HIGH', recommendation: "Apply critical security patches immediately. Prioritize systems with internet exposure and those containing sensitive data." },
+  'patching_cadence_v3_high': { factor: 'Patching Cadence', title: 'High Severity Unpatched Vulnerability', severity: 'HIGH', recommendation: "Schedule high-priority patching within 24-72 hours. Implement compensating controls until patches can be applied." },
+  'patching_cadence_v3_medium': { factor: 'Patching Cadence', title: 'Medium Severity Unpatched Vulnerability', severity: 'MEDIUM', recommendation: "Include medium-severity patches in your regular patch cycle. Plan remediation within 30 days." },
+  'patching_cadence_v3_low': { factor: 'Patching Cadence', title: 'Low Severity Unpatched Vulnerability', severity: 'LOW', recommendation: "Address low-severity vulnerabilities in your next maintenance window. Monitor for any changes in severity ratings." },
+  'patching_cadence_high': { factor: 'Patching Cadence', title: 'High Severity Patching Delay', severity: 'HIGH', recommendation: "Accelerate patch deployment for high-severity vulnerabilities. Review and optimize your patch management process." },
+  'patching_analysis_high': { factor: 'Patching Cadence', title: 'High Severity Patch Analysis Required', severity: 'HIGH', recommendation: "Conduct immediate patch impact analysis and deploy critical updates to affected systems." },
+  'patching_analysis_medium': { factor: 'Patching Cadence', title: 'Medium Severity Patch Analysis Required', severity: 'MEDIUM', recommendation: "Schedule patch analysis and deployment within your standard change management process." },
+  'patching_analysis_low': { factor: 'Patching Cadence', title: 'Low Severity Patch Analysis Required', severity: 'LOW', recommendation: "Include in routine patching activities. Monitor for potential escalation in severity." },
+  
+  // Endpoint Security
+  'service_vuln_host_v3_critical': { factor: 'Endpoint Security', title: 'Critical Vulnerability on Host', severity: 'HIGH', recommendation: "Immediately patch or mitigate critical vulnerabilities. Isolate affected systems if patches cannot be applied promptly." },
+  'service_vuln_host_v3_high': { factor: 'Endpoint Security', title: 'High Severity Vulnerability on Host', severity: 'HIGH', recommendation: "Prioritize patching high-severity vulnerabilities. Implement network segmentation and access controls as interim measures." },
+  'service_vuln_host_v3_medium': { factor: 'Endpoint Security', title: 'Medium Severity Vulnerability on Host', severity: 'MEDIUM', recommendation: "Include in your regular vulnerability remediation cycle. Monitor for exploitation attempts." },
+  'service_vuln_host_v3_low': { factor: 'Endpoint Security', title: 'Low Severity Vulnerability on Host', severity: 'LOW', recommendation: "Address during routine maintenance. Document and track for compliance purposes." },
+  'openssl_critical_vulnerability': { factor: 'Endpoint Security', title: 'OpenSSL Critical Vulnerability', severity: 'HIGH', recommendation: "Update OpenSSL to the latest patched version immediately. This affects all services using OpenSSL for encryption." },
+  
+  // DNS Health
+  'dkim_record_detected': { factor: 'DNS Health', title: 'DKIM Record Detected', severity: 'INFO', recommendation: "Verify DKIM configuration is correct and keys are properly rotated. Ensure SPF and DMARC records complement your DKIM setup." },
+  
+  // Credential Security
+  'historical_compromised_credentials_found': { factor: 'Leaked Information', title: 'Compromised Credentials Detected', severity: 'HIGH', recommendation: "Immediately reset compromised passwords. Enforce MFA on all affected accounts. Conduct user awareness training on password security." }
+};
+
+/**
+ * Normalize individual finding CSV row to Full Issues Report format
+ */
+function normalizeIndividualFinding(row, issueTypeCode, fileName) {
+  const mapping = ISSUE_TYPE_MAP[issueTypeCode] || {
+    factor: 'Uncategorized',
+    title: issueTypeCode.replace(/_/g, ' ').replace(/v\d+$/, '').trim(),
+    severity: 'INFO',
+    recommendation: 'Review and remediate as appropriate.'
+  };
+  
+  // Extract target/hostname from various possible columns
+  const target = row['Target'] || row['Hostname'] || row['Domain'] || row['IP Address'] || row['Ip addresses'] || '';
+  const hostname = row['Hostname'] || row['Domain'] || target;
+  const ipAddress = row['IP Address'] || row['Ip address'] || row['Ip addresses'] || '';
+  const port = row['Port'] || '';
+  const url = row['Url'] || row['Source'] || '';
+  
+  // Generate a deterministic ID based on issue content if Issue ID is missing
+  // This ensures consistent identification across multiple loads
+  let issueId = row['Issue ID'];
+  if (!issueId) {
+    const hashInput = `${issueTypeCode}|${target}|${ipAddress}|${port}|${row['First Observed'] || ''}`;
+    // Simple deterministic hash function
+    let hash = 0;
+    for (let i = 0; i < hashInput.length; i++) {
+      const char = hashInput.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    issueId = `gen-${Math.abs(hash).toString(36)}-${issueTypeCode.substring(0, 8)}`;
+  }
+  
+  return {
+    'ISSUE ID': issueId,
+    'FACTOR NAME': mapping.factor,
+    'ISSUE TYPE TITLE': mapping.title,
+    'ISSUE TYPE CODE': issueTypeCode,
+    'ISSUE TYPE SEVERITY': mapping.severity,
+    'ISSUE RECOMMENDATION': mapping.recommendation,
+    'FIRST SEEN': row['First Observed'] || '',
+    'LAST SEEN': row['Last Observed'] || '',
+    'IP ADDRESSES': ipAddress,
+    'HOSTNAME': hostname,
+    'SUBDOMAIN': row['Subdomain'] || '',
+    'TARGET': target,
+    'PORTS': port,
+    'STATUS': row['Status'] || 'Open',
+    'CVE': row['CVE'] || '',
+    'DESCRIPTION': row['Vulnerability description'] || row['Explanation'] || '',
+    'INITIAL URL': url,
+    'FINAL URL': row['Final URL'] || '',
+    'ANALYSIS': row['Observation Details'] || row['Data'] || '',
+    'COOKIE NAME': row['Cookie Name'] || '',
+    'PROVIDER': row['Provider'] || '',
+    'PRODUCT': row['Product name'] || '',
+    'VERSION': row['Product version'] || '',
+    'ISSUE TYPE SCORE IMPACT': row['Issue Incidence'] || ''
+  };
+}
+
+/**
+ * Extract issue type code from filename
+ */
+function extractIssueTypeFromFilename(filename) {
+  // Pattern: SecurityScorecard - domain.name - issue_type_code - findings - date.csv
+  // Domain can contain hyphens (e.g., 'my-domain.com'), so we match everything up to ' - findings'
+  // and then extract the issue type code from the second-to-last segment
+  const match = filename.match(/SecurityScorecard\s*-\s*(.+?)\s*-\s*([a-z0-9_]+)\s*-\s*findings/i);
+  if (match) {
+    return match[2].toLowerCase();
+  }
+  return null;
+}
+
+/**
+ * Check if file is a credential breach file
+ */
+function isCredentialBreachFile(filename) {
+  return filename.toLowerCase().includes('historical_compromised_credentials_found');
+}
+
+/**
+ * Check if file is a Full Issues Report
+ */
+function isFullIssuesReport(filename) {
+  return filename.toLowerCase().includes('fullissuesreport');
+}
+
 async function loadSampleData() {
   // Capture report options
   state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
@@ -3387,17 +3853,71 @@ async function loadSampleData() {
   state.allIssues = [];
   state.credentialBreachData = [];
   
-  // List of sample files to load from /data folder
-  const sampleFiles = [
+  // ═══════════════════════════════════════════════════════════════
+  // COMPREHENSIVE LIST OF ALL DATA FILES
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Full Issues Reports (primary entity data)
+  const fullIssuesReports = [
     { name: 'ABC-FullIssuesReport-2026-03-05.csv', entityName: 'ABC Company' },
     { name: 'DEF-FullIssuesReport-2026-03-05.csv', entityName: 'DEF Company' }
   ];
   
-  for (let i = 0; i < sampleFiles.length; i++) {
-    const fileInfo = sampleFiles[i];
+  // Individual SecurityScorecard findings files for hnbassurance.com
+  const hnbassuranceFindings = [
+    'SecurityScorecard - hnbassurance.com - cookie_missing_http_only - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - cookie_missing_secure_attribute - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - csp_no_policy_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - csp_unsafe_policy_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - dkim_record_detected - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - domain_missing_https_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - hsts_incorrect_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - open_port - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - openssl_critical_vulnerability - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_analysis_high - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_analysis_low - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_analysis_medium - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_cadence_high - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_cadence_v3_critical - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_cadence_v3_high - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_cadence_v3_low - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - patching_cadence_v3_medium - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - redirect_chain_contains_http_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_cloud_provider - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_ftp - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_http_proxy - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_vuln_host_v3_critical - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_vuln_host_v3_high - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_vuln_host_v3_low - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - service_vuln_host_v3_medium - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - ssh_weak_cipher - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tls_weak_cipher - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tls_weak_protocol - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tlscert_excessive_expiration - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tlscert_expired - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tlscert_no_revocation - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - tlscert_self_signed - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - unsafe_sri_v2 - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - x_content_type_options_incorrect_v2 - findings - March 6, 2026.csv'
+  ];
+  
+  // Credential breach files
+  const credentialBreachFiles = [
+    'SecurityScorecard - ABC - historical_compromised_credentials_found - findings - March 6, 2026.csv',
+    'SecurityScorecard - hnbassurance.com - historical_compromised_credentials_found - findings - March 6, 2026.csv'
+  ];
+  
+  const totalFiles = fullIssuesReports.length + hnbassuranceFindings.length + credentialBreachFiles.length;
+  let loadedCount = 0;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // LOAD FULL ISSUES REPORTS
+  // ═══════════════════════════════════════════════════════════════
+  for (let i = 0; i < fullIssuesReports.length; i++) {
+    const fileInfo = fullIssuesReports[i];
     
     elements.loaderStatus.textContent = `Loading ${fileInfo.entityName}…`;
-    elements.loaderBar.style.width = `${(i / sampleFiles.length) * 60}%`;
+    elements.loaderBar.style.width = `${(loadedCount / totalFiles) * 80}%`;
     
     try {
       const response = await fetch(`data/${fileInfo.name}`);
@@ -3427,27 +3947,71 @@ async function loadSampleData() {
       console.error(`Error loading ${fileInfo.name}:`, error);
     }
     
-    await sleep(100);
+    loadedCount++;
+    await sleep(50);
   }
   
-  if (state.entities.length === 0) {
-    elements.loadingScreen.classList.remove('active');
-    elements.uploadScreen.style.display = '';
-    // Re-enable sample button
-    const sampleBtn = document.getElementById('load-sample-btn');
-    if (sampleBtn) sampleBtn.disabled = false;
-    alert('Could not load sample data files. Please ensure the data folder contains CSV files.');
-    return;
+  // ═══════════════════════════════════════════════════════════════
+  // LOAD HNBASSURANCE.COM INDIVIDUAL FINDINGS
+  // ═══════════════════════════════════════════════════════════════
+  const hnbRows = [];
+  
+  for (let i = 0; i < hnbassuranceFindings.length; i++) {
+    const fileName = hnbassuranceFindings[i];
+    const issueTypeCode = extractIssueTypeFromFilename(fileName);
+    
+    elements.loaderStatus.textContent = `Loading HNB Assurance findings (${i + 1}/${hnbassuranceFindings.length})…`;
+    elements.loaderBar.style.width = `${(loadedCount / totalFiles) * 80}%`;
+    
+    try {
+      const response = await fetch(`data/${encodeURIComponent(fileName)}`);
+      if (!response.ok) {
+        console.warn(`Could not load ${fileName}`);
+        continue;
+      }
+      
+      const text = await response.text();
+      const result = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: h => h.trim()
+      });
+      
+      // Normalize each row to Full Issues Report format
+      result.data.forEach(row => {
+        const normalizedRow = normalizeIndividualFinding(row, issueTypeCode, fileName);
+        hnbRows.push(normalizedRow);
+      });
+      
+    } catch (error) {
+      console.warn(`Error loading ${fileName}:`, error);
+    }
+    
+    loadedCount++;
   }
   
-  // Load credential breach data from data folder
-  elements.loaderStatus.textContent = 'Loading credential breach data…';
-  elements.loaderBar.style.width = '65%';
-  try {
-    const credFiles = [
-      'SecurityScorecard - ABC - historical_compromised_credentials_found - findings - March 6, 2026.csv'
-    ];
-    for (const credFile of credFiles) {
+  // Add HNB Assurance as a separate entity if we have data
+  if (hnbRows.length > 0) {
+    state.entities.push({
+      name: 'HNB Assurance',
+      rows: hnbRows
+    });
+    
+    hnbRows.forEach(row => {
+      state.allIssues.push({ ...row, _entityName: 'HNB Assurance' });
+    });
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // LOAD CREDENTIAL BREACH DATA
+  // ═══════════════════════════════════════════════════════════════
+  elements.loaderStatus.textContent = 'Loading credential breach intelligence…';
+  elements.loaderBar.style.width = '85%';
+  
+  const allCredBreachData = [];
+  
+  for (const credFile of credentialBreachFiles) {
+    try {
       const resp = await fetch(`data/${encodeURIComponent(credFile)}`);
       if (resp.ok) {
         const text = await resp.text();
@@ -3456,15 +4020,38 @@ async function loadSampleData() {
           skipEmptyLines: true,
           transformHeader: h => h.trim()
         });
-        state.credentialBreachData = result.data;
+        allCredBreachData.push(...result.data);
       }
+    } catch (err) {
+      console.warn(`Could not load credential breach file: ${credFile}`, err);
     }
-  } catch (err) {
-    console.warn('Could not load credential breach file:', err);
+    loadedCount++;
   }
   
-  elements.loaderBar.style.width = '85%';
-  elements.loaderStatus.textContent = 'Analyzing data…';
+  // Deduplicate credential breach data by Issue ID
+  const credBreachMap = new Map();
+  allCredBreachData.forEach(row => {
+    const id = row['Issue ID'] || generateId();
+    if (!credBreachMap.has(id)) {
+      credBreachMap.set(id, row);
+    }
+  });
+  state.credentialBreachData = Array.from(credBreachMap.values());
+  
+  // ═══════════════════════════════════════════════════════════════
+  // VALIDATE AND FINALIZE
+  // ═══════════════════════════════════════════════════════════════
+  if (state.entities.length === 0) {
+    elements.loadingScreen.classList.remove('active');
+    elements.uploadScreen.style.display = '';
+    const sampleBtn = document.getElementById('load-sample-btn');
+    if (sampleBtn) sampleBtn.disabled = false;
+    alert('Could not load sample data files. Please ensure the data folder contains CSV files.');
+    return;
+  }
+  
+  elements.loaderBar.style.width = '90%';
+  elements.loaderStatus.textContent = 'Analyzing security data…';
   await sleep(200);
   
   // Analyze all entities
@@ -3474,12 +4061,19 @@ async function loadSampleData() {
   }));
   
   elements.loaderBar.style.width = '100%';
-  elements.loaderStatus.textContent = 'Rendering report…';
+  elements.loaderStatus.textContent = 'Rendering professional report…';
   await sleep(200);
   
   // Hide loading, show report
   elements.loadingScreen.classList.remove('active');
   buildReport();
+  
+  // Log summary
+  console.log('Report Generation Summary:');
+  console.log(`- Entities loaded: ${state.entities.length}`);
+  state.entities.forEach(e => console.log(`  • ${e.name}: ${e.rows.length} findings`));
+  console.log(`- Total findings: ${state.allIssues.length}`);
+  console.log(`- Credential breach records: ${state.credentialBreachData.length}`);
 }
 
 async function generateReport() {
