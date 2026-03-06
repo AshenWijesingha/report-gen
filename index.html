@@ -2802,7 +2802,8 @@ input[type="file"] {
   .page {
     box-shadow: none !important;
     border: none !important;
-    page-break-after: always;
+    break-after: page;
+    page-break-after: always; /* fallback for older browsers */
   }
   
   .toolbar, #btn-back, #btn-print, #btn-pdf {
@@ -3763,8 +3764,23 @@ function normalizeIndividualFinding(row, issueTypeCode, fileName) {
   const port = row['Port'] || '';
   const url = row['Url'] || row['Source'] || '';
   
+  // Generate a deterministic ID based on issue content if Issue ID is missing
+  // This ensures consistent identification across multiple loads
+  let issueId = row['Issue ID'];
+  if (!issueId) {
+    const hashInput = `${issueTypeCode}|${target}|${ipAddress}|${port}|${row['First Observed'] || ''}`;
+    // Simple deterministic hash function
+    let hash = 0;
+    for (let i = 0; i < hashInput.length; i++) {
+      const char = hashInput.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    issueId = `gen-${Math.abs(hash).toString(36)}-${issueTypeCode.substring(0, 8)}`;
+  }
+  
   return {
-    'ISSUE ID': row['Issue ID'] || generateId(),
+    'ISSUE ID': issueId,
     'FACTOR NAME': mapping.factor,
     'ISSUE TYPE TITLE': mapping.title,
     'ISSUE TYPE CODE': issueTypeCode,
@@ -3795,10 +3811,12 @@ function normalizeIndividualFinding(row, issueTypeCode, fileName) {
  * Extract issue type code from filename
  */
 function extractIssueTypeFromFilename(filename) {
-  // Pattern: SecurityScorecard - domain - issue_type_code - findings - date.csv
-  const match = filename.match(/SecurityScorecard\s*-\s*[^-]+\s*-\s*([a-z0-9_]+)\s*-\s*findings/i);
+  // Pattern: SecurityScorecard - domain.name - issue_type_code - findings - date.csv
+  // Domain can contain hyphens (e.g., 'my-domain.com'), so we match everything up to ' - findings'
+  // and then extract the issue type code from the second-to-last segment
+  const match = filename.match(/SecurityScorecard\s*-\s*(.+?)\s*-\s*([a-z0-9_]+)\s*-\s*findings/i);
   if (match) {
-    return match[1].toLowerCase();
+    return match[2].toLowerCase();
   }
   return null;
 }
