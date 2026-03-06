@@ -4402,23 +4402,26 @@ function getCombinedData(analyzedList) {
   
   // Propagate findingsLimited flag if any entity was limited
   let originalTotal = 0;
+  let combinedLimitedTotal = 0;
   let anyLimited = false;
   analyzedList.forEach(({ data }) => {
     if (data.findingsLimited) anyLimited = true;
     originalTotal += (data.originalTotal || data.total);
+    combinedLimitedTotal += (data.limitedTotal != null ? data.limitedTotal : data.total);
   });
   
   const result = { total, severity, factors, topTitles, cves: [...cveSet], byGroup };
   if (anyLimited) {
     result.findingsLimited = true;
+    result.limitedTotal = combinedLimitedTotal;
     result.originalTotal = originalTotal;
   }
   return result;
 }
 
-// Apply a findings limit to analyzed entity data, prioritizing by severity
-// (HIGH → MEDIUM → LOW → INFO). Recalculates severity counts, factors, cves
-// and topTitles so all downstream rendering stays consistent.
+// Apply a findings limit to the detail findings list, prioritizing by severity
+// (HIGH → MEDIUM → LOW → INFO). All other data (severity counts, factors, cves,
+// topTitles) is preserved from the original analysis.
 function applyFindingsLimit(analysisData, maxFindings) {
   if (maxFindings <= 0) return analysisData;
 
@@ -4434,39 +4437,18 @@ function applyFindingsLimit(analysisData, maxFindings) {
     remaining -= take;
   });
 
-  // Recalculate severity counts
-  const severity = {};
-  order.forEach(sev => { severity[sev] = limitedByGroup[sev].length; });
-
-  // Recalculate factors
-  const factors = {};
-  const titleMap = {};
-  const cveSet = new Set();
-
-  order.forEach(sev => {
-    limitedByGroup[sev].forEach(issue => {
-      const factor = issue.factor || 'Uncategorized';
-      factors[factor] = (factors[factor] || 0) + 1;
-      if (issue.title) titleMap[issue.title] = (titleMap[issue.title] || 0) + 1;
-      if (issue.cve) {
-        issue.cve.split(/[,;\s]+/).filter(Boolean).forEach(c => cveSet.add(c.trim()));
-      }
-    });
-  });
-
-  const total = order.reduce((sum, s) => sum + severity[s], 0);
-  const topTitles = Object.entries(titleMap).sort((a, b) => b[1] - a[1]);
-  const originalTotal = analysisData.total;
+  const limitedTotal = order.reduce((sum, sev) => sum + limitedByGroup[sev].length, 0);
 
   return {
-    total,
-    severity,
-    factors,
-    topTitles,
-    cves: [...cveSet],
+    total: analysisData.total,
+    severity: analysisData.severity,
+    factors: analysisData.factors,
+    topTitles: analysisData.topTitles,
+    cves: analysisData.cves,
     byGroup: limitedByGroup,
-    findingsLimited: total < originalTotal,
-    originalTotal
+    findingsLimited: limitedTotal < analysisData.total,
+    limitedTotal,
+    originalTotal: analysisData.total
   };
 }
 
@@ -4850,7 +4832,7 @@ function renderCoverPage(data, entityName) {
       <div class="cover-footer">
         <div class="cover-footer-info">
           <div>Cyber Security Vulnerability Assessment Report</div>
-          <div>Assessment Period: ${escapeHtml(assessmentPeriod)} · Total Issues: ${total}${data.findingsLimited ? ` (limited from ${data.originalTotal})` : ''}</div>
+          <div>Assessment Period: ${escapeHtml(assessmentPeriod)} · Total Issues: ${total}${data.findingsLimited ? ` (detail findings limited to ${data.limitedTotal})` : ''}</div>
           ${analystName ? `<div>Prepared by: ${escapeHtml(analystName)}</div>` : ''}
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted)">Page 1</div>
@@ -4933,7 +4915,7 @@ function renderExecutiveSummary(data, entityName, pageNum, totalPages) {
           <div style="background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 14px;">⚠️</span>
             <span style="font-size: 11px; color: #eab308; font-weight: 600;">Findings Limited:</span>
-            <span style="font-size: 11px; color: var(--text-secondary);">This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">Detail findings list limited to ${data.limitedTotal} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.</span>
           </div>
         ` : ''}
         
@@ -6490,7 +6472,7 @@ async function exportPDF() {
       pdf.setFillColor(255, 250, 230);
       pdf.setDrawColor(234, 179, 8);
       pdf.roundedRect(margin, findingsLimitedNoticeY, contentWidth, 10, 2, 2, 'FD');
-      addText(`⚠ Findings Limited: This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.`, margin + 4, findingsLimitedNoticeY + 6.5, { size: 7.5, color: '#92400e' });
+      addText(`⚠ Findings Limited: Detail findings list limited to ${data.limitedTotal} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.`, margin + 4, findingsLimitedNoticeY + 6.5, { size: 7.5, color: '#92400e' });
       findingsLimitedNoticeY += 15;
     }
     
