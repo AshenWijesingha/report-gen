@@ -479,6 +479,13 @@ input[type="file"] {
   text-transform: uppercase;
 }
 
+.merge-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
 .input-field {
   background: rgba(15, 21, 32, 0.9);
   border: 1px solid var(--border-subtle);
@@ -3485,12 +3492,27 @@ function renderFileList() {
   `).join('');
   
   if (state.files.length > 0) {
-    elements.entityInputs.innerHTML = state.files.map((file, i) => {
-      const defaultName = guessEntityName(file.name);
+    // Group files by their guessed entity name so files from the same
+    // company are merged into a single report entity
+    const groups = [];
+    const groupMap = {};
+    state.files.forEach((file, i) => {
+      const entityName = guessEntityName(file.name);
+      if (!(entityName in groupMap)) {
+        groupMap[entityName] = groups.length;
+        groups.push({ name: entityName, fileIndices: [] });
+      }
+      groups[groupMap[entityName]].fileIndices.push(i);
+    });
+
+    elements.entityInputs.innerHTML = groups.map((group, gi) => {
+      const fileCount = group.fileIndices.length;
+      const fileIndicesStr = group.fileIndices.join(',');
       return `
         <div class="input-group">
-          <label class="input-label">Entity Name for File ${i + 1}</label>
-          <input class="input-field" id="entity-name-${i}" type="text" value="${escapeHtml(defaultName)}" placeholder="e.g., Company Name">
+          <label class="input-label">Entity Name${fileCount > 1 ? ` (${fileCount} files will be merged)` : ''}</label>
+          <input class="input-field entity-group-name" id="entity-group-${gi}" data-file-indices="${escapeHtml(fileIndicesStr)}" type="text" value="${escapeHtml(group.name)}" placeholder="e.g., Company Name">
+          ${fileCount > 1 ? `<div class="merge-hint">📎 ${fileCount} CSV files will be combined into a single report</div>` : ''}
         </div>
       `;
     }).join('');
@@ -3502,6 +3524,24 @@ function renderFileList() {
 }
 
 function guessEntityName(filename) {
+  // SecurityScorecard individual findings: extract domain/company name
+  // Pattern: SecurityScorecard - {domain} - {issue_type} - findings - {date}.csv
+  const sscMatch = filename.match(/SecurityScorecard\s*-\s*(.+?)\s*-\s*[a-z0-9_]+\s*-\s*findings/i);
+  if (sscMatch) {
+    return sscMatch[1].trim();
+  }
+
+  // Full Issues Report: extract prefix before "FullIssuesReport"
+  // Pattern: {prefix}-FullIssuesReport-{date}.csv
+  const firMatch = filename.match(/^(.+?)[-_]FullIssuesReport/i);
+  if (firMatch) {
+    return firMatch[1]
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\b\w/g, c => c.toUpperCase())
+      .trim();
+  }
+
+  // Default: everything before first - or _
   const match = filename.match(/^([^-_]+)/i);
   if (match) {
     return match[1]
@@ -4093,17 +4133,28 @@ async function generateReport() {
   state.allIssues = [];
   // Note: credentialBreachData keeps whatever was uploaded via the cred breach zone
   
-  // Required columns for SecurityScorecard Full Issues Report
-  const requiredColumns = ['ISSUE TYPE SEVERITY', 'ISSUE TYPE TITLE'];
-  let hasErrors = false;
+  // Read entity name assignments from grouped inputs
+  const groupInputs = document.querySelectorAll('.entity-group-name');
+  const fileEntityMap = {}; // maps file index -> entity name
+  
+  groupInputs.forEach(input => {
+    const entityName = input.value.trim().slice(0, maxInputLen) || 'Unnamed Entity';
+    const indices = (input.dataset.fileIndices || '').split(',').filter(Boolean).map(Number);
+    indices.forEach(idx => {
+      fileEntityMap[idx] = entityName;
+    });
+  });
+  
+  // Parse all files and collect rows by entity name
+  const entityRowsMap = {}; // entityName -> rows[]
+  const entityOrder = []; // maintain insertion order
   let errorMessages = [];
   
   for (let i = 0; i < state.files.length; i++) {
     const file = state.files[i];
-    const entityNameInput = document.getElementById(`entity-name-${i}`);
-    const entityName = (entityNameInput && entityNameInput.value.trim()) || file.name.replace(/\.csv$/i, '');
+    const entityName = fileEntityMap[i] || file.name.replace(/\.csv$/i, '');
     
-    elements.loaderStatus.textContent = `Parsing ${entityName}…`;
+    elements.loaderStatus.textContent = `Parsing file ${i + 1} of ${state.files.length}…`;
     elements.loaderBar.style.width = `${(i / state.files.length) * 70}%`;
     
     try {
@@ -4116,16 +4167,7 @@ async function generateReport() {
       
       // Check for parsing errors
       if (result.errors && result.errors.length > 0) {
-        console.warn(`CSV parsing warnings for ${entityName}:`, result.errors);
-      }
-      
-      // Validate required columns exist
-      const headers = result.meta && result.meta.fields ? result.meta.fields : [];
-      const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-      
-      if (missingColumns.length > 0) {
-        errorMessages.push(`${entityName}: Missing columns: ${missingColumns.join(', ')}`);
-        // Continue processing but warn user
+        console.warn(`CSV parsing warnings for ${file.name}:`, result.errors);
       }
       
       // Filter out completely empty rows
@@ -4133,20 +4175,36 @@ async function generateReport() {
         return Object.values(row).some(v => v && v.toString().trim());
       });
       
-      state.entities.push({
-        name: entityName,
-        rows: validRows
-      });
+      // Handle credential breach files separately
+      if (isCredentialBreachFile(file.name)) {
+        validRows.forEach(row => {
+          state.credentialBreachData.push(row);
+        });
+        continue; // Don't add to report entities
+      }
       
-      // Store all issues with entity reference
-      validRows.forEach(row => {
-        state.allIssues.push({ ...row, _entityName: entityName });
-      });
+      // Determine file type and normalize if needed
+      let processedRows;
+      const issueTypeCode = extractIssueTypeFromFilename(file.name);
+      
+      if (issueTypeCode && !isFullIssuesReport(file.name)) {
+        // SecurityScorecard individual findings - normalize to standard format
+        processedRows = validRows.map(row => normalizeIndividualFinding(row, issueTypeCode, file.name));
+      } else {
+        // Full Issues Report or standard format - use as-is
+        processedRows = validRows;
+      }
+      
+      // Add rows to the entity group (merges files with the same entity name)
+      if (!(entityName in entityRowsMap)) {
+        entityRowsMap[entityName] = [];
+        entityOrder.push(entityName);
+      }
+      entityRowsMap[entityName].push(...processedRows);
       
     } catch (parseError) {
-      hasErrors = true;
-      errorMessages.push(`${entityName}: ${parseError.message}`);
-      console.error(`Error parsing ${entityName}:`, parseError);
+      errorMessages.push(`${file.name}: ${parseError.message}`);
+      console.error(`Error parsing ${file.name}:`, parseError);
     }
     
     await sleep(100);
@@ -4155,6 +4213,30 @@ async function generateReport() {
   // Show warning if there were issues
   if (errorMessages.length > 0) {
     console.warn('CSV processing warnings:', errorMessages);
+  }
+  
+  // Build merged entities from the grouped rows
+  entityOrder.forEach(entityName => {
+    const rows = entityRowsMap[entityName];
+    state.entities.push({
+      name: entityName,
+      rows: rows
+    });
+    rows.forEach(row => {
+      state.allIssues.push({ ...row, _entityName: entityName });
+    });
+  });
+  
+  // Deduplicate credential breach data by Issue ID
+  if (state.credentialBreachData.length > 0) {
+    const credBreachMap = new Map();
+    state.credentialBreachData.forEach(row => {
+      const id = row['Issue ID'] || row['ISSUE ID'] || generateId();
+      if (!credBreachMap.has(id)) {
+        credBreachMap.set(id, row);
+      }
+    });
+    state.credentialBreachData = Array.from(credBreachMap.values());
   }
   
   // Check if we have any valid data to process
