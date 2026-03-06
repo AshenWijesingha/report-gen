@@ -4933,32 +4933,33 @@ function renderCredentialBreachPage(breachData, entityName, pageNum, totalPages)
           </thead>
           <tbody>
             ${rows.map(r => {
-              const domain = (r['Domain'] || '').trim();
-              const user   = (r['User Name'] || '').trim();
-              const pwd    = (r['Leaked Password'] || '').trim();
-              const inf    = (r['Infection Date'] || '').trim();
-              const steal  = (r['Stealer Name'] || '').trim();
-              const cntry  = (r['Country'] || '').trim();
-              const os     = (r['Operating System'] || '').trim();
-              const first  = (r['First Observed'] || '').trim().replace('T', ' ').slice(0, 16);
-              const stealColor = steal.toLowerCase() === 'redline' ? '#ef4444'
-                : steal.toLowerCase() === 'vidar' ? '#f97316'
-                : steal.toLowerCase() === 'raccoon' ? '#eab308'
+              const domain        = (r['Domain'] || '').trim();
+              const user          = (r['User Name'] || '').trim();
+              const password      = (r['Leaked Password'] || '').trim();
+              const infectionDate = (r['Infection Date'] || '').trim();
+              const stealerName   = (r['Stealer Name'] || '').trim();
+              const country       = (r['Country'] || '').trim();
+              const os            = (r['Operating System'] || '').trim();
+              // Slice to 'YYYY-MM-DD HH:MM' (16 chars: date + space + time without seconds)
+              const firstObserved = (r['First Observed'] || '').trim().replace('T', ' ').slice(0, 16);
+              const stealColor = stealerName.toLowerCase() === 'redline' ? '#ef4444'
+                : stealerName.toLowerCase() === 'vidar' ? '#f97316'
+                : stealerName.toLowerCase() === 'raccoon' ? '#eab308'
                 : '#8b5cf6';
               return `
                 <tr>
                   <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent)">${escapeHtml(truncate(domain, 35))}</td>
                   <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-primary)">${escapeHtml(truncate(user, 18))}</td>
-                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px">${escapeHtml(pwd || '●●●●●●●●')}</td>
-                  <td style="font-size: 10px; color: var(--text-secondary)">${escapeHtml(inf)}</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px">${escapeHtml(password || '●●●●●●●●')}</td>
+                  <td style="font-size: 10px; color: var(--text-secondary)">${escapeHtml(infectionDate)}</td>
                   <td>
                     <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: ${stealColor}; background: rgba(0,0,0,0.15); border-radius: 4px; padding: 2px 6px;">
-                      ${escapeHtml(steal || '—')}
+                      ${escapeHtml(stealerName || '—')}
                     </span>
                   </td>
-                  <td style="font-size: 10px; color: var(--text-muted)">${escapeHtml(cntry || '—')}</td>
+                  <td style="font-size: 10px; color: var(--text-muted)">${escapeHtml(country || '—')}</td>
                   <td style="font-size: 10px; color: var(--text-secondary)">${escapeHtml(truncate(os, 28))}</td>
-                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted)">${escapeHtml(first)}</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted)">${escapeHtml(firstObserved)}</td>
                 </tr>`;
             }).join('')}
           </tbody>
@@ -5929,17 +5930,22 @@ async function exportPDF() {
       
       addText('Breach Records', margin, pdf.lastAutoTable.finalY + 12, { size: 11, style: 'bold', color: '#ef4444' });
       
+      // Column width limits for the PDF breach table
+      const PDF_BREACH_MAX_DOMAIN = 30;
+      const PDF_BREACH_MAX_USER   = 18;
+      const PDF_BREACH_MAX_OS     = 22;
+      
       pdf.autoTable({
         startY: pdf.lastAutoTable.finalY + 18,
         head: [['Domain', 'Username', 'Password', 'Infection Date', 'Stealer', 'Country', 'OS']],
         body: cbData.slice(0, 40).map(r => [
-          truncate((r['Domain'] || '—'), 30),
-          truncate((r['User Name'] || '—'), 18),
+          truncate((r['Domain'] || '—'), PDF_BREACH_MAX_DOMAIN),
+          truncate((r['User Name'] || '—'), PDF_BREACH_MAX_USER),
           (r['Leaked Password'] || '●●●●●●●●'),
           (r['Infection Date'] || '—'),
           (r['Stealer Name'] || '—'),
           (r['Country'] || '—'),
-          truncate((r['Operating System'] || '—'), 22)
+          truncate((r['Operating System'] || '—'), PDF_BREACH_MAX_OS)
         ]),
         theme: 'striped',
         headStyles: { fillColor: [239, 68, 68], fontSize: 7 },
