@@ -479,6 +479,13 @@ input[type="file"] {
   text-transform: uppercase;
 }
 
+.merge-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
 .input-field {
   background: rgba(15, 21, 32, 0.9);
   border: 1px solid var(--border-subtle);
@@ -3501,13 +3508,11 @@ function renderFileList() {
     elements.entityInputs.innerHTML = groups.map((group, gi) => {
       const fileCount = group.fileIndices.length;
       const fileIndicesStr = group.fileIndices.join(',');
-      const truncateName = (name, max) => name.length > max ? name.substring(0, max - 3) + '…' : name;
-      const fileNames = group.fileIndices.map(idx => escapeHtml(truncateName(state.files[idx].name, 60)));
       return `
         <div class="input-group">
           <label class="input-label">Entity Name${fileCount > 1 ? ` (${fileCount} files will be merged)` : ''}</label>
           <input class="input-field entity-group-name" id="entity-group-${gi}" data-file-indices="${escapeHtml(fileIndicesStr)}" type="text" value="${escapeHtml(group.name)}" placeholder="e.g., Company Name">
-          ${fileCount > 1 ? `<div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">📎 ${fileCount} CSV files will be combined into a single report</div>` : ''}
+          ${fileCount > 1 ? `<div class="merge-hint">📎 ${fileCount} CSV files will be combined into a single report</div>` : ''}
         </div>
       `;
     }).join('');
