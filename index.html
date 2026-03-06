@@ -3119,9 +3119,13 @@ function handleFiles(files) {
       return;
     }
     
-    // Validate MIME type (CSV files)
-    const validTypes = ['text/csv', 'application/csv', 'text/plain', 'application/vnd.ms-excel'];
-    if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.csv')) {
+    // Validate file type - use .csv extension as primary check since MIME types vary
+    // Only accept files with .csv extension OR specific CSV MIME types
+    const csvMimeTypes = ['text/csv', 'application/csv', 'application/vnd.ms-excel'];
+    const hasCsvExtension = file.name.toLowerCase().endsWith('.csv');
+    const hasCsvMimeType = csvMimeTypes.includes(file.type);
+    
+    if (!hasCsvExtension && !hasCsvMimeType) {
       skippedFiles.push(`${file.name} (not a CSV file)`);
       return;
     }
@@ -3130,6 +3134,8 @@ function handleFiles(files) {
   });
   
   if (skippedFiles.length > 0) {
+    // Log to console for debugging and show user-friendly message
+    console.warn('Files skipped during upload:', skippedFiles);
     alert('Some files were skipped:\n' + skippedFiles.join('\n'));
   }
   
@@ -3598,6 +3604,9 @@ function analyzeEntity(rows) {
   const cveSet = new Set();
   const byGroup = { HIGH: [], MEDIUM: [], LOW: [], INFO: [] };
   
+  // Track unrecognized severity values for debugging
+  const unrecognizedSeverities = new Set();
+  
   rows.forEach(row => {
     const sev = (row['ISSUE TYPE SEVERITY'] || '').trim().toUpperCase();
     const factor = (row['FACTOR NAME'] || '').trim() || 'Uncategorized';
@@ -3605,7 +3614,18 @@ function analyzeEntity(rows) {
     const cveRaw = (row['CVE'] || '').trim();
     
     // Handle valid severity or default to INFO for unrecognized
-    const validSev = sev in severity ? sev : (title ? 'INFO' : null);
+    let validSev;
+    if (sev in severity) {
+      validSev = sev;
+    } else if (sev && title) {
+      // Log warning for unrecognized severity values
+      unrecognizedSeverities.add(sev);
+      validSev = 'INFO';
+    } else if (title) {
+      validSev = 'INFO';
+    } else {
+      validSev = null;
+    }
     
     if (validSev) {
       severity[validSev]++;
@@ -3658,6 +3678,11 @@ function analyzeEntity(rows) {
       byGroup[validSev].push(issue);
     }
   });
+  
+  // Log warning for any unrecognized severity values found
+  if (unrecognizedSeverities.size > 0) {
+    console.warn('Unrecognized severity values in CSV data (defaulted to INFO):', [...unrecognizedSeverities]);
+  }
   
   const topTitles = Object.entries(titleMap).sort((a, b) => b[1] - a[1]);
   
@@ -3847,7 +3872,6 @@ function getFactorColor(factor) {
   let hash = 0;
   for (let i = 0; i < factor.length; i++) {
     hash = factor.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
   }
   const hue = Math.abs(hash % 360);
   const color = `hsl(${hue}, 70%, 55%)`;
@@ -3891,9 +3915,10 @@ function makeCVELink(cve) {
     const cleanCVE = c.trim();
     if (isValidCVE(cleanCVE)) {
       const url = `https://nvd.nist.gov/vuln/detail/${cleanCVE}`;
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="cve-badge">${escapeHtml(cleanCVE)}</a>`;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="cve-badge" title="View ${cleanCVE} on NVD">${escapeHtml(cleanCVE)}</a>`;
     }
-    return `<span class="cve-badge" style="opacity: 0.6">${escapeHtml(cleanCVE)}</span>`;
+    // Add title/aria-label for accessibility when showing non-standard CVE format
+    return `<span class="cve-badge" style="opacity: 0.6" title="Non-standard CVE identifier" aria-label="Non-standard CVE identifier: ${escapeHtml(cleanCVE)}">${escapeHtml(cleanCVE)}</span>`;
   });
   
   return links.join(' ');
@@ -3903,8 +3928,8 @@ function makeCVELink(cve) {
 function isValidUrl(url) {
   if (!url) return false;
   const urlLower = url.toLowerCase().trim();
-  // Block dangerous protocols
-  const blockedProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
+  // Block dangerous protocols that can be used for XSS attacks
+  const blockedProtocols = ['javascript:', 'data:', 'vbscript:', 'file:', 'blob:'];
   for (const protocol of blockedProtocols) {
     if (urlLower.startsWith(protocol)) return false;
   }
