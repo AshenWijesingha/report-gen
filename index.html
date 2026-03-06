@@ -4498,7 +4498,6 @@ function formatDate() {
 
 // Configuration constants
 const CONFIG = {
-  MAX_FINDINGS_IN_PDF: 25,
   FINDINGS_PER_PAGE: 10
 };
 
@@ -6211,16 +6210,6 @@ async function exportPDF() {
     ...(data.byGroup.INFO || [])
   ];
   
-  // Warn user if findings exceed PDF limits
-  if (allFindings.length > CONFIG.MAX_FINDINGS_IN_PDF) {
-    const proceed = confirm(
-      `This report contains ${allFindings.length} findings, but the PDF will only include the first ${CONFIG.MAX_FINDINGS_IN_PDF} detailed findings.\n\n` +
-      `High: ${data.severity.HIGH || 0}, Medium: ${data.severity.MEDIUM || 0}, Low: ${data.severity.LOW || 0}, Info: ${data.severity.INFO || 0}\n\n` +
-      `Click OK to proceed, or Cancel to review in the web report first.`
-    );
-    if (!proceed) return;
-  }
-  
   elements.pdfOverlay.classList.add('active');
   elements.pdfBar.style.width = '0%';
   elements.pdfStatus.textContent = 'Initializing PDF export...';
@@ -6689,7 +6678,7 @@ async function exportPDF() {
     const maxY = pageHeight - 30;
     let findingsOnPage = 0;
     
-    for (let i = 0; i < Math.min(allFindings.length, CONFIG.MAX_FINDINGS_IN_PDF); i++) {
+    for (let i = 0; i < allFindings.length; i++) {
       const finding = allFindings[i];
       
       // Check if we need a new page
@@ -6788,12 +6777,6 @@ async function exportPDF() {
       currentY += 8;
       
       findingsOnPage++;
-    }
-    
-    if (allFindings.length > CONFIG.MAX_FINDINGS_IN_PDF) {
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 116, 139);
-      pdf.text(`Showing ${CONFIG.MAX_FINDINGS_IN_PDF} of ${allFindings.length} findings. See web report for complete details.`, margin, currentY + 5);
     }
     
     addText(`Page 6`, pageWidth - margin - 15, pageHeight - 10, { size: 8, color: '#64748b' });
