@@ -3207,7 +3207,7 @@ svg path:hover {
         <div class="input-group">
           <label class="input-label" for="max-findings-input">Max Findings per Entity</label>
           <input class="input-field" id="max-findings-input" type="number" min="0" step="1" placeholder="0 = no limit (include all)">
-          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Limits findings included in the report. Higher severity findings are prioritised. Leave empty or 0 for no limit.</div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Limits findings included in the report. Higher severity findings are prioritized. Leave empty or 0 for no limit.</div>
         </div>
       </div>
     </div>
@@ -4416,11 +4416,11 @@ function getCombinedData(analyzedList) {
   return result;
 }
 
-// Apply a findings limit to analyzed entity data, prioritising by severity
+// Apply a findings limit to analyzed entity data, prioritizing by severity
 // (HIGH → MEDIUM → LOW → INFO). Recalculates severity counts, factors, cves
 // and topTitles so all downstream rendering stays consistent.
 function applyFindingsLimit(analysisData, maxFindings) {
-  if (!maxFindings || maxFindings <= 0) return analysisData;
+  if (maxFindings <= 0) return analysisData;
 
   const { byGroup } = analysisData;
   const order = ['HIGH', 'MEDIUM', 'LOW', 'INFO'];
@@ -4933,7 +4933,7 @@ function renderExecutiveSummary(data, entityName, pageNum, totalPages) {
           <div style="background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 14px;">⚠️</span>
             <span style="font-size: 11px; color: #eab308; font-weight: 600;">Findings Limited:</span>
-            <span style="font-size: 11px; color: var(--text-secondary);">This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritised.</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.</span>
           </div>
         ` : ''}
         
@@ -6490,7 +6490,7 @@ async function exportPDF() {
       pdf.setFillColor(255, 250, 230);
       pdf.setDrawColor(234, 179, 8);
       pdf.roundedRect(margin, findingsLimitedNoticeY, contentWidth, 10, 2, 2, 'FD');
-      addText(`⚠ Findings Limited: This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritised.`, margin + 4, findingsLimitedNoticeY + 6.5, { size: 7.5, color: '#92400e' });
+      addText(`⚠ Findings Limited: This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritized.`, margin + 4, findingsLimitedNoticeY + 6.5, { size: 7.5, color: '#92400e' });
       findingsLimitedNoticeY += 15;
     }
     
