@@ -163,7 +163,7 @@ Click **Generate Professional Report**. The report renders instantly in the brow
 - The PDF is generated client-side and downloaded automatically.
 - CVE identifiers and URLs are clickable in the exported PDF.
 
-> **PDF Limits:** To keep file size manageable, the PDF includes up to **25 findings** in the summary tables and **10 findings per page** in the detailed section.
+> **PDF Layout:** The PDF includes **all findings** in the summary tables and **10 findings per page** in the detailed section.
 
 ---
 
@@ -238,7 +238,6 @@ The following constants control PDF output behavior and can be modified in `inde
 
 ```javascript
 const CONFIG = {
-  MAX_FINDINGS_IN_PDF: 25,   // Maximum findings rows in summary PDF tables
   FINDINGS_PER_PAGE: 10,     // Findings per page in the detailed section
 };
 ```
