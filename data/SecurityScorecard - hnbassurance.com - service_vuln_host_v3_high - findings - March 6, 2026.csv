@@ -1,0 +1,162 @@
+Issue ID,First Observed,Last Observed,CVE,Vulnerability,Domain,Certificate Common Name,Ip address,Ip addresses,Hostname,Port,Email,Product name,Product version,IP Address,Port,CVE Publish Date,Last Observed,Banner,Data,Source,Url,Explanation,Vulnerability description,Last Observed,Decay Reason,Observation Details,Observation Count,Average Findings (similar companies),Issue Incidence
+ae4a4b7e-c7ff-5d90-9602-2aaae6361f77,2025-05-07T05:47:49,2026-02-28T11:44:17,,CVE-2024-6387,,,,,,22,,,,146.190.102.247,22,2024-07-01,2026-02-28T11:44:17,,,,,,"A security regression (CVE-2006-5051) was discovered in OpenSSH's server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.",,,,0,,0
+9060219a-1240-5c53-9aee-633addbb1723,2026-02-25T18:52:18,2026-02-28T11:44:17,,CVE-2024-39894,,,,,,22,,,,146.190.102.247,22,2024-07-02,2026-02-28T11:44:17,,,,,,"OpenSSH 9.5 through 9.7 before 9.8 sometimes allows timing attacks against echo-off password entry (e.g., for su and Sudo) because of an ObscureKeystrokeTiming logic error. Similarly, other timing attacks against keystroke entry could occur.",,,,0,,0
+11b9424d-4b57-5f05-90eb-948f11f63841,2024-07-05T08:49:14,2026-02-27T06:57:30,,CVE-2024-6387,,,,,,22,,,,134.209.100.157,22,2024-07-01,2026-02-27T06:57:30,,,,,,"A security regression (CVE-2006-5051) was discovered in OpenSSH's server (sshd). There is a race condition which can lead sshd to handle some signals in an unsafe manner. An unauthenticated, remote attacker may be able to trigger it by failing to authenticate within a set time period.",,,,0,,0
+06ee8d34-15d4-53f1-bdaf-1a9663ea09b9,2024-02-29T22:45:30,2026-02-27T06:57:30,,CVE-2021-41617,,,,,,22,,,,134.209.100.157,22,2021-09-26,2026-02-27T06:57:30,,,,,,"sshd in OpenSSH 6.2 through 8.x before 8.8, when certain non-default configurations are used, allows privilege escalation because supplemental groups are not initialized as expected. Helper programs for AuthorizedKeysCommand and AuthorizedPrincipalsCommand may run with privileges associated with group memberships of the sshd process, if the configuration specifies running the command as a different user.",,,,0,,0
+ac19375c-92df-5bd4-8071-9d6b9539eda1,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-42516,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"HTTP response splitting in the core of Apache HTTP Server allows an attacker who can manipulate the Content-Type response headers of applications hosted or proxied by the server can split the HTTP response.
+
+This vulnerability was described as CVE-2023-38709 but the patch included in Apache HTTP Server 2.4.59 did not address the issue.
+
+Users are recommended to upgrade to version 2.4.64, which fixes this issue.",,,,0,,0
+bf7670ed-5fde-5079-832e-190f25237d51,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-30522,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,"If Apache HTTP Server 2.4.53 is configured to do transformations with mod_sed in contexts where the input to mod_sed may be very large, mod_sed may make excessively large memory allocations and trigger an abort.",,,,0,,0
+2c2b2942-02ed-5b4f-846c-826c913c0b13,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-43394,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"Server-Side Request Forgery (SSRF)\xC2\xA0in Apache HTTP Server on Windows allows to potentially leak NTLM hashes to a malicious server via\xC2\xA0
+mod_rewrite or apache expressions that pass unvalidated request input.
+
+This issue affects Apache HTTP Server: from 2.4.0 through 2.4.63.
+
+Note: \xC2\xA0The Apache HTTP Server Project will be setting a higher bar for accepting vulnerability reports regarding SSRF via UNC paths. 
+
+The server offers limited protection against administrators directing the server to open UNC paths.
+Windows servers should limit the hosts they will connect over via SMB based on the nature of NTLM authentication.",,,,0,,0
+422a4b1e-dc0f-525d-84c0-a03f4f559f01,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-27522,,,,,,80,,,,146.190.102.247,80,2023-03-07,2026-02-13T16:07:30,,,,,,"HTTP Response Smuggling vulnerability in Apache HTTP Server via mod_proxy_uwsgi. This issue affects Apache HTTP Server: from 2.4.30 through 2.4.55.
+
+Special characters in the origin response header can truncate/split the response forwarded to the client.",,,,0,,0
+908d94f2-774a-5438-85b6-09c00791ba56,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2025-49630,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"In certain proxy configurations, a denial of service attack against\xC2\xA0Apache HTTP Server versions 2.4.26 through to 2.4.63 can be triggered by untrusted clients causing an assertion in mod_proxy_http2.
+
+Configurations affected are a reverse proxy is configured for an HTTP/2 backend, with ProxyPreserveHost set to ""on"".",,,,0,,0
+149c382f-f0ff-5854-86d6-a4f348fe3101,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-30556,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,Apache HTTP Server 2.4.53 and earlier may return lengths to applications calling r:wsread() that point past the end of the storage allocated for the buffer.,,,,0,,0
+8bff3178-ba87-577c-87b9-3da6e3bb84eb,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-26377,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling') vulnerability in mod_proxy_ajp of Apache HTTP Server allows an attacker to smuggle requests to the AJP server it forwards requests to. This issue affects Apache HTTP Server Apache HTTP Server 2.4 version 2.4.53 and prior versions.,,,,0,,0
+4d52ddab-6350-52dd-88d2-8edd618011bb,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2025-53020,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"Late Release of Memory after Effective Lifetime vulnerability in Apache HTTP Server.
+
+This issue affects Apache HTTP Server: from 2.4.17 up to 2.4.63.
+
+Users are recommended to upgrade to version 2.4.64, which fixes the issue.",,,,0,,0
+4c4d8837-c147-5b37-8961-849c4af8c892,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-43204,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server with mod_proxy loaded allows an attacker to send outbound proxy requests to a URL controlled by the attacker.\xC2\xA0 Requires an unlikely configuration where mod_headers is configured to modify the Content-Type request or response header with a value provided in the HTTP request.
+
+Users are recommended to upgrade to version 2.4.64 which fixes this issue.",,,,0,,0
+a57ec691-1070-59e5-8a98-4c98f4853b7c,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-39573,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"Potential SSRF in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an attacker to cause unsafe RewriteRules to unexpectedly setup URL's to be handled by mod_proxy.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+8a8d061f-518b-56f4-8b53-8fa4e936d987,2025-05-07T05:47:49,2026-02-13T16:07:30,,CVE-2021-41617,,,,,,22,,,,146.190.102.247,22,2021-09-26,2026-02-13T16:07:30,,,,,,"sshd in OpenSSH 6.2 through 8.x before 8.8, when certain non-default configurations are used, allows privilege escalation because supplemental groups are not initialized as expected. Helper programs for AuthorizedKeysCommand and AuthorizedPrincipalsCommand may run with privileges associated with group memberships of the sshd process, if the configuration specifies running the command as a different user.",,,,0,,0
+852d3215-5a9f-5d55-8b72-43d7979ed8e4,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-29404,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,"In Apache HTTP Server 2.4.53 and earlier, a malicious request to a lua script that calls r:parsebody(0) may cause a denial of service due to no default limit on possible input size.",,,,0,,0
+7e76e3c8-1e9a-5ef4-8dae-aaa11aaa54d0,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-45802,,,,,,80,,,,146.190.102.247,80,2023-10-23,2026-02-13T16:07:30,,,,,,"When a HTTP/2 stream was reset (RST frame) by a client, there was a time window were the request's memory resources were not reclaimed immediately. Instead, de-allocation was deferred to connection close. A client could send new requests and resets, keeping the connection busy and open and causing the memory footprint to keep on growing. On connection close, all resources were reclaimed, but the process might run out of memory before that.
+
+This was found by the reporter during testing of\xC2\xA0CVE-2023-44487 (HTTP/2 Rapid Reset Exploit) with their own test client. During ""normal"" HTTP/2 use, the probability to hit this bug is very low. The kept memory would not become noticeable before the connection closes or times out.
+
+Users are recommended to upgrade to version 2.4.58, which fixes the issue.",,,,0,,0
+c8de931f-2d7d-5c1a-8e24-f51261bb0787,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38472,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server on Windows allows to potentially leak NTLM hashes to a malicious server via SSRF and\xC2\xA0malicious requests or content 
+Users are recommended to upgrade to version 2.4.60 which fixes this issue.\xC2\xA0 Note: Existing configurations that access UNC paths will have to configure new directive ""UNCList"" to allow access during request processing.",,,,0,,0
+9a4e72be-6809-51d6-9135-4dd500033a6e,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-43204,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server with mod_proxy loaded allows an attacker to send outbound proxy requests to a URL controlled by the attacker.\xC2\xA0 Requires an unlikely configuration where mod_headers is configured to modify the Content-Type request or response header with a value provided in the HTTP request.
+
+Users are recommended to upgrade to version 2.4.64 which fixes this issue.",,,,0,,0
+2be42567-83a3-5669-96ee-fd8d104782c5,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-45802,,,,,,443,,,,146.190.102.247,443,2023-10-23,2026-02-13T16:07:30,,,,,,"When a HTTP/2 stream was reset (RST frame) by a client, there was a time window were the request's memory resources were not reclaimed immediately. Instead, de-allocation was deferred to connection close. A client could send new requests and resets, keeping the connection busy and open and causing the memory footprint to keep on growing. On connection close, all resources were reclaimed, but the process might run out of memory before that.
+
+This was found by the reporter during testing of\xC2\xA0CVE-2023-44487 (HTTP/2 Rapid Reset Exploit) with their own test client. During ""normal"" HTTP/2 use, the probability to hit this bug is very low. The kept memory would not become noticeable before the connection closes or times out.
+
+Users are recommended to upgrade to version 2.4.58, which fixes the issue.",,,,0,,0
+2b8c5682-f545-5c5c-9754-37f6e60cabb6,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-30522,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,"If Apache HTTP Server 2.4.53 is configured to do transformations with mod_sed in contexts where the input to mod_sed may be very large, mod_sed may make excessively large memory allocations and trigger an abort.",,,,0,,0
+b219864f-f35c-541d-9826-c9e04789d25c,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-29404,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,"In Apache HTTP Server 2.4.53 and earlier, a malicious request to a lua script that calls r:parsebody(0) may cause a denial of service due to no default limit on possible input size.",,,,0,,0
+cddd9925-7b80-5dd6-98bb-fbb57abc5efc,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-38709,,,,,,80,,,,146.190.102.247,80,2024-04-04,2026-02-13T16:07:30,,,,,,"Faulty input validation in the core of Apache allows malicious or exploitable backend/content generators to split HTTP responses.
+
+This issue affects Apache HTTP Server: through 2.4.58.",,,,0,,0
+d9e48fc3-a6f8-5895-9c4a-7f379c22bd25,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38477,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"null pointer dereference in mod_proxy in Apache HTTP Server 2.4.59 and earlier allows an attacker to crash the server via a malicious request.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+60578e86-6f67-5f8d-9d3f-09d565bb3bca,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2006-20001,,,,,,443,,,,146.190.102.247,443,2023-01-17,2026-02-13T16:07:30,,,,,,"A carefully crafted If: request header can cause a memory read, or write of a single zero byte, in a pool (heap) memory location beyond the header value sent. This could cause the process to crash.
+
+This issue affects Apache HTTP Server 2.4.54 and earlier.",,,,0,,0
+dabe981b-3382-55e8-9e7a-9d33f7007fd5,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2025-49812,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"In some mod_ssl configurations on Apache HTTP Server versions through to 2.4.63, an HTTP desynchronisation attack allows a man-in-the-middle attacker to hijack an HTTP session via a TLS upgrade.
+
+Only configurations using ""SSLEngine optional"" to enable TLS upgrades are affected. Users are recommended to upgrade to version 2.4.64, which removes support for TLS upgrade.",,,,0,,0
+d68c1aca-e742-5d4d-9ed6-49e6d252d919,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-59775,,,,,,80,,,,146.190.102.247,80,2025-12-05,2026-02-13T16:07:30,,,,,,"Server-Side Request Forgery (SSRF) vulnerability 
+
+\xC2\xA0in Apache HTTP Server on Windows 
+
+with AllowEncodedSlashes On\xC2\xA0and MergeSlashes Off\xC2\xA0 allows to potentially leak NTLM 
+hashes to a malicious server via SSRF and malicious requests or content
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+bb01ccb8-9c49-5a9f-9fad-104fd1abc1d9,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38477,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"null pointer dereference in mod_proxy in Apache HTTP Server 2.4.59 and earlier allows an attacker to crash the server via a malicious request.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+06c8ab94-5e21-5db5-a15d-eef98cc19e27,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2024-47252,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"Insufficient escaping of user-supplied data in mod_ssl in Apache HTTP Server 2.4.63 and earlier allows an untrusted SSL/TLS client to insert escape characters into log files in some configurations.
+
+In a logging configuration where CustomLog is used with ""%{varname}x"" or ""%{varname}c"" to log variables provided by mod_ssl such as SSL_TLS_SNI, no escaping is performed by either mod_log_config or mod_ssl and unsanitized data provided by the client may appear in log files.",,,,0,,0
+ef107846-f006-5b82-a9bd-a8992ba125d4,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38472,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server on Windows allows to potentially leak NTLM hashes to a malicious server via SSRF and\xC2\xA0malicious requests or content 
+Users are recommended to upgrade to version 2.4.60 which fixes this issue.\xC2\xA0 Note: Existing configurations that access UNC paths will have to configure new directive ""UNCList"" to allow access during request processing.",,,,0,,0
+d0ae384a-720f-53d4-aa01-5d57b98d8dfc,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-26377,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling') vulnerability in mod_proxy_ajp of Apache HTTP Server allows an attacker to smuggle requests to the AJP server it forwards requests to. This issue affects Apache HTTP Server Apache HTTP Server 2.4 version 2.4.53 and prior versions.,,,,0,,0
+e3121719-e0fb-539a-aa8f-9d0019409132,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-43394,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"Server-Side Request Forgery (SSRF)\xC2\xA0in Apache HTTP Server on Windows allows to potentially leak NTLM hashes to a malicious server via\xC2\xA0
+mod_rewrite or apache expressions that pass unvalidated request input.
+
+This issue affects Apache HTTP Server: from 2.4.0 through 2.4.63.
+
+Note: \xC2\xA0The Apache HTTP Server Project will be setting a higher bar for accepting vulnerability reports regarding SSRF via UNC paths. 
+
+The server offers limited protection against administrators directing the server to open UNC paths.
+Windows servers should limit the hosts they will connect over via SMB based on the nature of NTLM authentication.",,,,0,,0
+2c566e27-cac2-57bd-aaa2-4f854ccf3c7e,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-39573,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"Potential SSRF in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an attacker to cause unsafe RewriteRules to unexpectedly setup URL's to be handled by mod_proxy.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+b9488de9-0501-52e3-ab66-a2386ce9d561,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-36760,,,,,,443,,,,146.190.102.247,443,2023-01-17,2026-02-13T16:07:30,,,,,,Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling') vulnerability in mod_proxy_ajp of Apache HTTP Server allows an attacker to smuggle requests to the AJP server it forwards requests to.  This issue affects Apache HTTP Server Apache HTTP Server 2.4 version 2.4.54 and prior versions.,,,,0,,0
+0c567b00-635a-5887-abdd-1df4eb70414e,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-27316,,,,,,443,,,,146.190.102.247,443,2024-04-04,2026-02-13T16:07:30,,,,,,"HTTP/2 incoming headers exceeding the limit are temporarily buffered in nghttp2 in order to generate an informative HTTP 413 response. If a client does not stop sending headers, this leads to memory exhaustion.",,,,0,,0
+6380483e-4e76-5bc0-acf8-308521649c36,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-58098,,,,,,80,,,,146.190.102.247,80,2025-12-05,2026-02-13T16:07:30,,,,,,"Apache HTTP Server 2.4.65 and earlier with Server Side Includes (SSI) enabled and mod_cgid (but not mod_cgi) passes the shell-escaped query string to #exec cmd=""..."" directives.
+
+This issue affects Apache HTTP Server before 2.4.66.
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+d11ba14a-c5d8-5894-ae93-f9ac849f2b3f,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38473,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"Encoding problem in mod_proxy in Apache HTTP Server 2.4.59 and earlier allows request URLs with incorrect encoding to be sent to backend services, potentially bypassing authentication via crafted requests.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+bf5bced7-af14-5d51-aed8-fd11fb4457ae,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-38709,,,,,,443,,,,146.190.102.247,443,2024-04-04,2026-02-13T16:07:30,,,,,,"Faulty input validation in the core of Apache allows malicious or exploitable backend/content generators to split HTTP responses.
+
+This issue affects Apache HTTP Server: through 2.4.58.",,,,0,,0
+8c649185-9112-5daf-af7b-7e430bb5a798,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-30556,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,Apache HTTP Server 2.4.53 and earlier may return lengths to applications calling r:wsread() that point past the end of the storage allocated for the buffer.,,,,0,,0
+37619d4c-ff4d-5904-afef-239c1082cdec,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2025-49812,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"In some mod_ssl configurations on Apache HTTP Server versions through to 2.4.63, an HTTP desynchronisation attack allows a man-in-the-middle attacker to hijack an HTTP session via a TLS upgrade.
+
+Only configurations using ""SSLEngine optional"" to enable TLS upgrades are affected. Users are recommended to upgrade to version 2.4.64, which removes support for TLS upgrade.",,,,0,,0
+ce2690e5-4249-5706-b2c3-74ed9815b663,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-59775,,,,,,443,,,,146.190.102.247,443,2025-12-05,2026-02-13T16:07:30,,,,,,"Server-Side Request Forgery (SSRF) vulnerability 
+
+\xC2\xA0in Apache HTTP Server on Windows 
+
+with AllowEncodedSlashes On\xC2\xA0and MergeSlashes Off\xC2\xA0 allows to potentially leak NTLM 
+hashes to a malicious server via SSRF and malicious requests or content
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+f54be22e-f1ef-5049-b4a2-fb0add65dace,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2025-49630,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"In certain proxy configurations, a denial of service attack against\xC2\xA0Apache HTTP Server versions 2.4.26 through to 2.4.63 can be triggered by untrusted clients causing an assertion in mod_proxy_http2.
+
+Configurations affected are a reverse proxy is configured for an HTTP/2 backend, with ProxyPreserveHost set to ""on"".",,,,0,,0
+894a4248-ef93-554d-b588-9f8e31efb26a,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-36760,,,,,,80,,,,146.190.102.247,80,2023-01-17,2026-02-13T16:07:30,,,,,,Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling') vulnerability in mod_proxy_ajp of Apache HTTP Server allows an attacker to smuggle requests to the AJP server it forwards requests to.  This issue affects Apache HTTP Server Apache HTTP Server 2.4 version 2.4.54 and prior versions.,,,,0,,0
+cff9c1ec-992e-5b14-b6a1-9ba4ff2c7bb5,2025-07-15T13:01:23,2026-02-13T16:07:30,,CVE-2024-47252,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"Insufficient escaping of user-supplied data in mod_ssl in Apache HTTP Server 2.4.63 and earlier allows an untrusted SSL/TLS client to insert escape characters into log files in some configurations.
+
+In a logging configuration where CustomLog is used with ""%{varname}x"" or ""%{varname}c"" to log variables provided by mod_ssl such as SSL_TLS_SNI, no escaping is performed by either mod_log_config or mod_ssl and unsanitized data provided by the client may appear in log files.",,,,0,,0
+8b2b5f1e-2742-55c1-b7ce-2c46fcd37b48,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-58098,,,,,,443,,,,146.190.102.247,443,2025-12-05,2026-02-13T16:07:30,,,,,,"Apache HTTP Server 2.4.65 and earlier with Server Side Includes (SSI) enabled and mod_cgid (but not mod_cgi) passes the shell-escaped query string to #exec cmd=""..."" directives.
+
+This issue affects Apache HTTP Server before 2.4.66.
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+fd7a55d9-a6e6-5df3-b86e-e94efc13d00b,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38473,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"Encoding problem in mod_proxy in Apache HTTP Server 2.4.59 and earlier allows request URLs with incorrect encoding to be sent to backend services, potentially bypassing authentication via crafted requests.
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+b9cc8090-cd67-5ec2-b8d1-bf279ed0156c,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-27522,,,,,,443,,,,146.190.102.247,443,2023-03-07,2026-02-13T16:07:30,,,,,,"HTTP Response Smuggling vulnerability in Apache HTTP Server via mod_proxy_uwsgi. This issue affects Apache HTTP Server: from 2.4.30 through 2.4.55.
+
+Special characters in the origin response header can truncate/split the response forwarded to the client.",,,,0,,0
+bf7703bc-662a-55d8-b95e-7fa4f8b18303,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-55753,,,,,,80,,,,146.190.102.247,80,2025-12-05,2026-02-13T16:07:30,,,,,,"An integer overflow in the case of failed ACME certificate renewal leads, after a number of failures (~30 days in default configurations), to the backoff timer becoming 0. Attempts to renew the certificate then are repeated without delays until it succeeds.
+
+This issue affects Apache HTTP Server: from 2.4.30 before 2.4.66.
+
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+7fe96ce1-1328-59b5-b9f3-17b4ba65032e,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-27316,,,,,,80,,,,146.190.102.247,80,2024-04-04,2026-02-13T16:07:30,,,,,,"HTTP/2 incoming headers exceeding the limit are temporarily buffered in nghttp2 in order to generate an informative HTTP 413 response. If a client does not stop sending headers, this leads to memory exhaustion.",,,,0,,0
+59e88b67-f2e5-5e31-bc8c-d59c4e8d3bdd,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2006-20001,,,,,,80,,,,146.190.102.247,80,2023-01-17,2026-02-13T16:07:30,,,,,,"A carefully crafted If: request header can cause a memory read, or write of a single zero byte, in a pool (heap) memory location beyond the header value sent. This could cause the process to crash.
+
+This issue affects Apache HTTP Server 2.4.54 and earlier.",,,,0,,0
+d93f4e54-ace2-5e85-be82-fd4f37781bfa,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2025-53020,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"Late Release of Memory after Effective Lifetime vulnerability in Apache HTTP Server.
+
+This issue affects Apache HTTP Server: from 2.4.17 up to 2.4.63.
+
+Users are recommended to upgrade to version 2.4.64, which fixes the issue.",,,,0,,0
+b7cbc395-94f1-5519-be93-d6775c11d5ac,2025-12-11T18:11:50,2026-02-13T16:07:30,,CVE-2025-55753,,,,,,443,,,,146.190.102.247,443,2025-12-05,2026-02-13T16:07:30,,,,,,"An integer overflow in the case of failed ACME certificate renewal leads, after a number of failures (~30 days in default configurations), to the backoff timer becoming 0. Attempts to renew the certificate then are repeated without delays until it succeeds.
+
+This issue affects Apache HTTP Server: from 2.4.30 before 2.4.66.
+
+
+Users are recommended to upgrade to version 2.4.66, which fixes the issue.",,,,0,,0
+cb67769b-e58e-5a34-bfaf-8369c5f47693,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2024-42516,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"HTTP response splitting in the core of Apache HTTP Server allows an attacker who can manipulate the Content-Type response headers of applications hosted or proxied by the server can split the HTTP response.
+
+This vulnerability was described as CVE-2023-38709 but the patch included in Apache HTTP Server 2.4.59 did not address the issue.
+
+Users are recommended to upgrade to version 2.4.64, which fixes this issue.",,,,0,,0

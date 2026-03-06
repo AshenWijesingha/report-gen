@@ -1,0 +1,87 @@
+Issue ID,First Observed,Last Observed,CVE,Vulnerability,Domain,Certificate Common Name,Ip address,Ip addresses,Hostname,Port,Email,Product name,Product version,IP Address,Port,CVE Publish Date,Last Observed,Banner,Data,Source,Url,Explanation,Vulnerability description,Last Observed,Decay Reason,Observation Details,Observation Count,Average Findings (similar companies),Issue Incidence
+724e34fb-0ed4-5e5e-8d5f-b8a7a37dc47e,2024-02-29T22:45:30,2026-02-27T06:57:30,,CVE-2023-51385,,,,,,22,,,,134.209.100.157,22,2023-12-18,2026-02-27T06:57:30,,,,,,"In ssh in OpenSSH before 9.6, OS command injection might occur if a user name or host name has shell metacharacters, and this name is referenced by an expansion token in certain situations. For example, an untrusted Git repository can have a submodule with shell metacharacters in a user name or host name.",,,,0,,0
+66262dfc-c3fb-5c14-aa78-9d09b6a6543b,2024-02-29T22:45:30,2026-02-27T06:57:30,,CVE-2023-38408,,,,,,22,,,,134.209.100.157,22,2023-07-20,2026-02-27T06:57:30,,,,,,"The PKCS#11 feature in ssh-agent in OpenSSH before 9.3p2 has an insufficiently trustworthy search path, leading to remote code execution if an agent is forwarded to an attacker-controlled system. (Code in /usr/lib is not necessarily safe for loading into ssh-agent.) NOTE: this issue exists because of an incomplete fix for CVE-2016-10009.",,,,0,,0
+82b45fe4-0d7f-583f-8134-eb55067a4312,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38474,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"Substitution encoding issue in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows attacker to execute scripts in
+directories permitted by the configuration but not directly reachable by any\xC2\xA0URL or source disclosure of scripts meant to only to be executed as CGI.
+
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.
+
+Some RewriteRules that capture and substitute unsafely will now fail unless rewrite flag ""UnsafeAllow3F"" is specified.",,,,0,,0
+8a01514f-3d05-5d4f-866d-dc978f55c271,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38475,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"Improper escaping of output in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an attacker to map URLs to filesystem locations that are\xC2\xA0permitted to be served by the server but are not intentionally/directly reachable by any URL, resulting in code execution or source code disclosure. 
+
+Substitutions in\xC2\xA0server context that use a backreferences or variables as the first segment of the substitution are affected.\xC2\xA0 Some unsafe RewiteRules will be broken by this change and the rewrite flag ""UnsafePrefixStat"" can be used to opt back in once ensuring the substitution is appropriately constrained.",,,,0,,0
+88851fe1-d5cc-527c-89f1-c9b8d827791e,2025-05-07T05:47:49,2026-02-13T16:07:30,,CVE-2023-38408,,,,,,22,,,,146.190.102.247,22,2023-07-20,2026-02-13T16:07:30,,,,,,"The PKCS#11 feature in ssh-agent in OpenSSH before 9.3p2 has an insufficiently trustworthy search path, leading to remote code execution if an agent is forwarded to an attacker-controlled system. (Code in /usr/lib is not necessarily safe for loading into ssh-agent.) NOTE: this issue exists because of an incomplete fix for CVE-2016-10009.",,,,0,,0
+c703387b-4379-5f40-8a31-8e304a3e9118,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-28615,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,"Apache HTTP Server 2.4.53 and earlier may crash or disclose information due to a read beyond bounds in ap_strcmp_match() when provided with an extremely large input buffer. While no code distributed with the server can be coerced into such a call, third-party modules or lua scripts that use ap_strcmp_match() may hypothetically be affected.",,,,0,,0
+0ba82361-a401-54d8-90fe-74da9a5056d7,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2025-23048,,,,,,80,,,,146.190.102.247,80,2025-07-10,2026-02-13T16:07:30,,,,,,"In some mod_ssl configurations on Apache HTTP Server 2.4.35 through to 2.4.63, an access control bypass by trusted clients is possible using TLS 1.3 session resumption.
+
+Configurations are affected when mod_ssl is configured for multiple virtual hosts, with each restricted to a different set of trusted client certificates (for example with a different SSLCACertificateFile/Path setting). In such a case, a client trusted to access one virtual host may be able to access another virtual host, if SSLStrictSNIVHostCheck is not enabled in either virtual host.",,,,0,,0
+85b8dbda-e922-5594-9211-00662ce3e8cc,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-31813,,,,,,80,,,,146.190.102.247,80,2022-06-09,2026-02-13T16:07:30,,,,,,Apache HTTP Server 2.4.53 and earlier may not send the X-Forwarded-* headers to the origin server based on client side Connection header hop-by-hop mechanism. This may be used to bypass IP based authentication on the origin server/application.,,,,0,,0
+4c77327c-7e1c-53df-9243-9f249e70d6f7,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38474,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"Substitution encoding issue in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows attacker to execute scripts in
+directories permitted by the configuration but not directly reachable by any\xC2\xA0URL or source disclosure of scripts meant to only to be executed as CGI.
+
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.
+
+Some RewriteRules that capture and substitute unsafely will now fail unless rewrite flag ""UnsafeAllow3F"" is specified.",,,,0,,0
+df207648-e206-5900-9f60-1a105460d821,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-40898,,,,,,443,,,,146.190.102.247,443,2024-07-18,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server on Windows with mod_rewrite in server/vhost context, allows to potentially leak NTML hashes to a malicious server via SSRF and malicious requests.
+
+Users are recommended to upgrade to version 2.4.62 which fixes this issue.\xC2\xA0",,,,0,,0
+b5e29d9c-9eba-5ceb-a14b-7ab38cda4e26,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-31122,,,,,,80,,,,146.190.102.247,80,2023-10-23,2026-02-13T16:07:30,,,,,,Out-of-bounds Read vulnerability in mod_macro of Apache HTTP Server.This issue affects Apache HTTP Server: through 2.4.57.,,,,0,,0
+7391a41d-672f-5428-a272-a3f9f1eb51f8,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-28615,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,"Apache HTTP Server 2.4.53 and earlier may crash or disclose information due to a read beyond bounds in ap_strcmp_match() when provided with an extremely large input buffer. While no code distributed with the server can be coerced into such a call, third-party modules or lua scripts that use ap_strcmp_match() may hypothetically be affected.",,,,0,,0
+98b2820d-c058-5993-a281-b926cc31309c,2025-05-07T05:47:49,2026-02-13T16:07:30,,CVE-2023-51385,,,,,,22,,,,146.190.102.247,22,2023-12-18,2026-02-13T16:07:30,,,,,,"In ssh in OpenSSH before 9.6, OS command injection might occur if a user name or host name has shell metacharacters, and this name is referenced by an expansion token in certain situations. For example, an untrusted Git repository can have a submodule with shell metacharacters in a user name or host name.",,,,0,,0
+7b406677-d4d7-596e-a3ec-2eb6779df768,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-40898,,,,,,80,,,,146.190.102.247,80,2024-07-18,2026-02-13T16:07:30,,,,,,"SSRF in Apache HTTP Server on Windows with mod_rewrite in server/vhost context, allows to potentially leak NTML hashes to a malicious server via SSRF and malicious requests.
+
+Users are recommended to upgrade to version 2.4.62 which fixes this issue.\xC2\xA0",,,,0,,0
+a56aee3d-d410-51b0-a458-6957321b7efb,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-31122,,,,,,443,,,,146.190.102.247,443,2023-10-23,2026-02-13T16:07:30,,,,,,Out-of-bounds Read vulnerability in mod_macro of Apache HTTP Server.This issue affects Apache HTTP Server: through 2.4.57.,,,,0,,0
+b22d77d1-9793-592b-a634-d3267d4b129c,2025-07-17T00:31:09,2026-02-13T16:07:30,,CVE-2025-23048,,,,,,443,,,,146.190.102.247,443,2025-07-10,2026-02-13T16:07:30,,,,,,"In some mod_ssl configurations on Apache HTTP Server 2.4.35 through to 2.4.63, an access control bypass by trusted clients is possible using TLS 1.3 session resumption.
+
+Configurations are affected when mod_ssl is configured for multiple virtual hosts, with each restricted to a different set of trusted client certificates (for example with a different SSLCACertificateFile/Path setting). In such a case, a client trusted to access one virtual host may be able to access another virtual host, if SSLStrictSNIVHostCheck is not enabled in either virtual host.",,,,0,,0
+420ef1d7-1628-5f3d-a729-0d797e1b3e07,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-25690,,,,,,443,,,,146.190.102.247,443,2023-03-07,2026-02-13T16:07:30,,,,,,"Some mod_proxy configurations on Apache HTTP Server versions 2.4.0 through 2.4.55 allow a HTTP Request Smuggling attack.
+
+
+
+
+Configurations are affected when mod_proxy is enabled along with some form of RewriteRule
+ or ProxyPassMatch in which a non-specific pattern matches
+ some portion of the user-supplied request-target (URL) data and is then
+ re-inserted into the proxied request-target using variable 
+substitution. For example, something like:
+
+
+
+
+RewriteEngine on
+RewriteRule ""^/here/(.*)"" ""http://example.com:8080/elsewhere?$1""; [P]
+ProxyPassReverse /here/ http://example.com:8080/
+
+
+Request splitting/smuggling could result in bypass of access controls in the proxy server, proxying unintended URLs to existing origin servers, and cache poisoning. Users are recommended to update to at least version 2.4.56 of Apache HTTP Server.",,,,0,,0
+1ac7903c-0a51-5a39-a8ae-a1900a0b0e8c,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2023-25690,,,,,,80,,,,146.190.102.247,80,2023-03-07,2026-02-13T16:07:30,,,,,,"Some mod_proxy configurations on Apache HTTP Server versions 2.4.0 through 2.4.55 allow a HTTP Request Smuggling attack.
+
+
+
+
+Configurations are affected when mod_proxy is enabled along with some form of RewriteRule
+ or ProxyPassMatch in which a non-specific pattern matches
+ some portion of the user-supplied request-target (URL) data and is then
+ re-inserted into the proxied request-target using variable 
+substitution. For example, something like:
+
+
+
+
+RewriteEngine on
+RewriteRule ""^/here/(.*)"" ""http://example.com:8080/elsewhere?$1""; [P]
+ProxyPassReverse /here/ http://example.com:8080/
+
+
+Request splitting/smuggling could result in bypass of access controls in the proxy server, proxying unintended URLs to existing origin servers, and cache poisoning. Users are recommended to update to at least version 2.4.56 of Apache HTTP Server.",,,,0,,0
+c56d9a0d-ad3e-5d6e-ab23-8d9808d675e1,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38476,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"Vulnerability in core of Apache HTTP Server 2.4.59 and earlier are vulnerably to information disclosure, SSRF or local script execution via\xC2\xA0backend applications whose response headers are malicious or exploitable.
+
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+37821fca-0a51-59ed-b565-863815dba6a9,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2022-31813,,,,,,443,,,,146.190.102.247,443,2022-06-09,2026-02-13T16:07:30,,,,,,Apache HTTP Server 2.4.53 and earlier may not send the X-Forwarded-* headers to the origin server based on client side Connection header hop-by-hop mechanism. This may be used to bypass IP based authentication on the origin server/application.,,,,0,,0
+8232e793-b580-5035-bac5-f86d1df47daa,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38476,,,,,,80,,,,146.190.102.247,80,2024-07-01,2026-02-13T16:07:30,,,,,,"Vulnerability in core of Apache HTTP Server 2.4.59 and earlier are vulnerably to information disclosure, SSRF or local script execution via\xC2\xA0backend applications whose response headers are malicious or exploitable.
+
+Users are recommended to upgrade to version 2.4.60, which fixes this issue.",,,,0,,0
+e15449c2-84d7-5f3e-bf08-6ec7b32ae521,2025-05-05T22:40:30,2026-02-13T16:07:30,,CVE-2024-38475,,,,,,443,,,,146.190.102.247,443,2024-07-01,2026-02-13T16:07:30,,,,,,"Improper escaping of output in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an attacker to map URLs to filesystem locations that are\xC2\xA0permitted to be served by the server but are not intentionally/directly reachable by any URL, resulting in code execution or source code disclosure. 
+
+Substitutions in\xC2\xA0server context that use a backreferences or variables as the first segment of the substitution are affected.\xC2\xA0 Some unsafe RewiteRules will be broken by this change and the rewrite flag ""UnsafePrefixStat"" can be used to opt back in once ensuring the substitution is appropriately constrained.",,,,0,,0
