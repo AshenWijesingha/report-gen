@@ -3841,7 +3841,7 @@ function normalizeIndividualFinding(row, issueTypeCode, fileName) {
     'TARGET': target,
     'PORTS': port,
     'STATUS': row['Status'] || 'Open',
-    'CVE': row['CVE'] || '',
+    'CVE': row['CVE'] || row['Vulnerability'] || row['Vulnerability_1'] || '',
     'DESCRIPTION': row['Vulnerability description'] || row['Explanation'] || '',
     'INITIAL URL': url,
     'FINAL URL': row['Final URL'] || '',
