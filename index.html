@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Intelligence — Professional Vulnerability Report Platform</title>
+<title>Security Report — Professional Vulnerability Report Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -2801,7 +2801,7 @@ input[type="file"] {
     <div class="brand-header">
       <div class="brand-icon">🛡️</div>
       <div class="brand-text">
-        <div class="brand-name">Cyber Intel</div>
+        <div class="brand-name">Security Report</div>
         <div class="brand-tagline">Professional Vulnerability Report Platform</div>
       </div>
       <button class="btn-theme" id="btn-theme-upload" style="margin-left: auto;" title="Toggle light/dark theme" onclick="toggleTheme()">🌙</button>
@@ -3852,7 +3852,7 @@ function renderCoverPage(data, entityName) {
         <div class="cover-logo">
           ${logoHtml}
           <div>
-            <div class="cover-logo-text">CYBER INTEL</div>
+            <div class="cover-logo-text">Security Report</div>
             <div class="cover-logo-tag">Security Intelligence Platform</div>
           </div>
         </div>
@@ -5399,7 +5399,7 @@ async function exportPDF() {
         }
         pdf.addImage(state.logoDataUrl, safeFormat, logoX, logoY, imgW, imgH, undefined, 'FAST');
         const textOffsetX = imgW + 4;
-        addText('CYBER INTEL', logoX + textOffsetX, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
+        addText('Security Report', logoX + textOffsetX, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
         addText('Security Intelligence Platform', logoX + textOffsetX, logoY + 14, { size: 8, color: '#64748b' });
       } catch (err) {
         // Fallback to initials box if image embedding fails
@@ -5409,7 +5409,7 @@ async function exportPDF() {
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(255, 255, 255);
         pdf.text('CI', logoX + 1.5, logoY + 9);
-        addText('CYBER INTEL', logoX + 15, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
+        addText('Security Report', logoX + 15, logoY + 8, { size: 14, style: 'bold', color: '#f8fafc' });
         addText('Security Intelligence Platform', logoX + 15, logoY + 14, { size: 8, color: '#64748b' });
       }
     } else {
@@ -5420,7 +5420,7 @@ async function exportPDF() {
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(255, 255, 255);
       pdf.text('CI', logoX + 1.5, logoY + 9);
-      addText('CYBER INTEL', logoX + 15, logoY + 8, { size: 20, style: 'bold', color: '#f8fafc' });
+      addText('Security Report', logoX + 15, logoY + 8, { size: 20, style: 'bold', color: '#f8fafc' });
       addText('Security Intelligence Platform', logoX + 15, logoY + 16, { size: 9, color: '#64748b' });
     }
     
