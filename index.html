@@ -3204,6 +3204,11 @@ svg path:hover {
           <label class="input-label" for="assessment-period-input">Assessment Period</label>
           <input class="input-field" id="assessment-period-input" type="text" placeholder="e.g., Jan 2025 – Mar 2025">
         </div>
+        <div class="input-group">
+          <label class="input-label" for="max-findings-input">Max Findings per Entity</label>
+          <input class="input-field" id="max-findings-input" type="number" min="0" step="1" placeholder="0 = no limit (include all)">
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Limits findings included in the report. Higher severity findings are prioritised. Leave empty or 0 for no limit.</div>
+        </div>
       </div>
     </div>
     
@@ -3348,7 +3353,8 @@ let state = {
   analystName: '',
   reportTitle: '',
   assessmentPeriod: '',
-  credentialBreachData: [] // parsed rows from credential breach CSV
+  credentialBreachData: [], // parsed rows from credential breach CSV
+  maxFindings: 0 // 0 = no limit; >0 = cap findings per entity
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -3391,6 +3397,7 @@ const elements = {
   analystNameInput: document.getElementById('analyst-name-input'),
   reportTitleInput: document.getElementById('report-title-input'),
   assessmentPeriodInput: document.getElementById('assessment-period-input'),
+  maxFindingsInput: document.getElementById('max-findings-input'),
   // Credential breach upload elements
   credBreachDropzone: document.getElementById('cred-breach-dropzone'),
   credBreachInput: document.getElementById('cred-breach-input'),
@@ -3880,6 +3887,7 @@ async function loadSampleData() {
   state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim()) || '';
   state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim()) || '';
   state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim()) || '';
+  state.maxFindings = Math.max(0, parseInt(elements.maxFindingsInput && elements.maxFindingsInput.value, 10) || 0);
   
   // Disable the sample data button to prevent rapid clicks
   const sampleBtn = document.getElementById('load-sample-btn');
@@ -4097,7 +4105,7 @@ async function loadSampleData() {
   // Analyze all entities
   state.analyzedData = state.entities.map(entity => ({
     name: entity.name,
-    data: analyzeEntity(entity.rows)
+    data: applyFindingsLimit(analyzeEntity(entity.rows), state.maxFindings)
   }));
   
   elements.loaderBar.style.width = '100%';
@@ -4124,6 +4132,7 @@ async function generateReport() {
   state.analystName = (elements.analystNameInput && elements.analystNameInput.value.trim().slice(0, maxInputLen)) || '';
   state.reportTitle = (elements.reportTitleInput && elements.reportTitleInput.value.trim().slice(0, maxInputLen)) || '';
   state.assessmentPeriod = (elements.assessmentPeriodInput && elements.assessmentPeriodInput.value.trim().slice(0, maxInputLen)) || '';
+  state.maxFindings = Math.max(0, parseInt(elements.maxFindingsInput && elements.maxFindingsInput.value, 10) || 0);
   
   // Show loading screen
   elements.uploadScreen.style.display = 'none';
@@ -4254,7 +4263,7 @@ async function generateReport() {
   // Analyze all entities
   state.analyzedData = state.entities.map(entity => ({
     name: entity.name,
-    data: analyzeEntity(entity.rows)
+    data: applyFindingsLimit(analyzeEntity(entity.rows), state.maxFindings)
   }));
   
   elements.loaderBar.style.width = '100%';
@@ -4391,7 +4400,74 @@ function getCombinedData(analyzedList) {
   
   const topTitles = Object.entries(titleMap).sort((a, b) => b[1] - a[1]);
   
-  return { total, severity, factors, topTitles, cves: [...cveSet], byGroup };
+  // Propagate findingsLimited flag if any entity was limited
+  let originalTotal = 0;
+  let anyLimited = false;
+  analyzedList.forEach(({ data }) => {
+    if (data.findingsLimited) anyLimited = true;
+    originalTotal += (data.originalTotal || data.total);
+  });
+  
+  const result = { total, severity, factors, topTitles, cves: [...cveSet], byGroup };
+  if (anyLimited) {
+    result.findingsLimited = true;
+    result.originalTotal = originalTotal;
+  }
+  return result;
+}
+
+// Apply a findings limit to analyzed entity data, prioritising by severity
+// (HIGH → MEDIUM → LOW → INFO). Recalculates severity counts, factors, cves
+// and topTitles so all downstream rendering stays consistent.
+function applyFindingsLimit(analysisData, maxFindings) {
+  if (!maxFindings || maxFindings <= 0) return analysisData;
+
+  const { byGroup } = analysisData;
+  const order = ['HIGH', 'MEDIUM', 'LOW', 'INFO'];
+  let remaining = maxFindings;
+  const limitedByGroup = {};
+
+  order.forEach(sev => {
+    const items = byGroup[sev] || [];
+    const take = Math.min(items.length, remaining);
+    limitedByGroup[sev] = items.slice(0, take);
+    remaining -= take;
+  });
+
+  // Recalculate severity counts
+  const severity = {};
+  order.forEach(sev => { severity[sev] = limitedByGroup[sev].length; });
+
+  // Recalculate factors
+  const factors = {};
+  const titleMap = {};
+  const cveSet = new Set();
+
+  order.forEach(sev => {
+    limitedByGroup[sev].forEach(issue => {
+      const factor = issue.factor || 'Uncategorized';
+      factors[factor] = (factors[factor] || 0) + 1;
+      if (issue.title) titleMap[issue.title] = (titleMap[issue.title] || 0) + 1;
+      if (issue.cve) {
+        issue.cve.split(/[,;\s]+/).filter(Boolean).forEach(c => cveSet.add(c.trim()));
+      }
+    });
+  });
+
+  const total = order.reduce((sum, s) => sum + severity[s], 0);
+  const topTitles = Object.entries(titleMap).sort((a, b) => b[1] - a[1]);
+  const originalTotal = analysisData.total;
+
+  return {
+    total,
+    severity,
+    factors,
+    topTitles,
+    cves: [...cveSet],
+    byGroup: limitedByGroup,
+    findingsLimited: total < originalTotal,
+    originalTotal
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4774,7 +4850,7 @@ function renderCoverPage(data, entityName) {
       <div class="cover-footer">
         <div class="cover-footer-info">
           <div>Cyber Security Vulnerability Assessment Report</div>
-          <div>Assessment Period: ${escapeHtml(assessmentPeriod)} · Total Issues: ${total}</div>
+          <div>Assessment Period: ${escapeHtml(assessmentPeriod)} · Total Issues: ${total}${data.findingsLimited ? ` (limited from ${data.originalTotal})` : ''}</div>
           ${analystName ? `<div>Prepared by: ${escapeHtml(analystName)}</div>` : ''}
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted)">Page 1</div>
@@ -4852,6 +4928,14 @@ function renderExecutiveSummary(data, entityName, pageNum, totalPages) {
           </div>
         </div>
         <div class="section-divider"></div>
+        
+        ${data.findingsLimited ? `
+          <div style="background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 14px;">⚠️</span>
+            <span style="font-size: 11px; color: #eab308; font-weight: 600;">Findings Limited:</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritised.</span>
+          </div>
+        ` : ''}
         
         <div class="kpi-grid">
           ${['HIGH', 'MEDIUM', 'LOW', 'INFO'].map(s => `
@@ -6399,13 +6483,25 @@ async function exportPDF() {
       styles: { fontSize: 9 }
     });
     
+    // Show notice when findings have been limited
+    let findingsLimitedNoticeY = pdf.lastAutoTable.finalY + 5;
+    if (data.findingsLimited) {
+      findingsLimitedNoticeY = pdf.lastAutoTable.finalY + 8;
+      pdf.setFillColor(255, 250, 230);
+      pdf.setDrawColor(234, 179, 8);
+      pdf.roundedRect(margin, findingsLimitedNoticeY, contentWidth, 10, 2, 2, 'FD');
+      addText(`⚠ Findings Limited: This report includes ${data.total} of ${data.originalTotal} total findings (capped at ${state.maxFindings} per entity). Higher severity findings were prioritised.`, margin + 4, findingsLimitedNoticeY + 6.5, { size: 7.5, color: '#92400e' });
+      findingsLimitedNoticeY += 15;
+    }
+    
     // Risk domains
     const factorList = Object.entries(data.factors).sort((a, b) => b[1] - a[1]).slice(0, 8);
     if (factorList.length > 0) {
-      addText('Risk Domain Distribution', margin, pdf.lastAutoTable.finalY + 15, { size: 12, style: 'bold', color: '#333333' });
+      const riskDomainStartY = data.findingsLimited ? findingsLimitedNoticeY : pdf.lastAutoTable.finalY + 10;
+      addText('Risk Domain Distribution', margin, riskDomainStartY + 5, { size: 12, style: 'bold', color: '#333333' });
       
       pdf.autoTable({
-        startY: pdf.lastAutoTable.finalY + 20,
+        startY: riskDomainStartY + 10,
         head: [['Domain', 'Count', 'Share']],
         body: factorList.map(([factor, count]) => [
           factor,
